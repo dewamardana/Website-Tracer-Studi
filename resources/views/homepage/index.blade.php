@@ -61,14 +61,14 @@
         </div>
         <div class="container">
             <div class="row justify-content-center">
-                @foreach ($template as $t)
+                @foreach ($kategori as $k)
                     <div class="col-md-4 mb-4">
                         <div class="card">
                             <img src="img/checklist.png" class="card-img-top mt-2" alt="...">
                             <div class="card-body">
-                                <h5 class="card-title text-center fw-bold">{{ $t->nama }}</h5>
-                                <p class="card-text">{{ $t->deskripsi }}</p>
-                                <a href="/detail/{{ $t->id }}" class="btn btn-primary">Baca Selengkapnya</a>
+                                <h5 class="card-title text-center fw-bold">{{ $k->nama }}</h5>
+                                <p class="card-text">{{ $k->deskripsi }}</p>
+                                <a href="/detail/{{ $k->id }}" class="btn btn-primary">Baca Selengkapnya</a>
                             </div>
                         </div>
                     </div>

@@ -12,9 +12,9 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    public function template(): HasMany
+    public function kategori(): HasMany
     {
-        return $this->hasMany(Template::class);
+        return $this->hasMany(Kategori::class);
     }
 
     public function form(): HasMany

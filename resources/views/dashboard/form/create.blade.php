@@ -30,14 +30,14 @@
     </div>
     
     <div class="mb-3">
-        <label for="template_id" class="form-label">Template</label>
-        <select class="form-select form-select-lg mb-3 @error('template_id') is-invalid @enderror" aria-label="Large select example" id="template_id" name="template_id" required>
-            <option selected disabled>Open this select menu</option>
-            @foreach ($template as $t)
-                <option value="{{ $t->id }}" {{ old('template_id') == $t->id ? 'selected' : '' }}>{{ $t->nama }}</option>
+        <label for="kategori_id" class="form-label">Kategori</label>
+        <select class="form-select form-select-lg mb-3 @error('kategori_id') is-invalid @enderror" aria-label="Large select example" id="kategori_id" name="kategori_id" required>
+            <option selected disabled>Pilih Kategori</option>
+            @foreach ($kategori as $k)
+                <option value="{{ $k->id }}" {{ old('kategori_id') == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
             @endforeach
         </select>
-        @error('template_id')
+        @error('kategori_id')
             <div class="alert alert-danger">{{ $message }}</div>
         @enderror
     </div>

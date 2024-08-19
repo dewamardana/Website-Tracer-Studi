@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Form;
+use App\Models\Kategori;
 use App\Models\Questions;
 use App\Models\Template;
 use Illuminate\Http\Request;
@@ -30,10 +31,10 @@ class FormController extends Controller
      */
     public function create()
     {
-        $template= Template::all();
+        $kategori= Kategori::all();
         return view('dashboard.form.create',[
             'title' => 'Form Create',
-            'template' => $template,
+            'kategori' => $kategori,
         ]);
     }
 
@@ -44,7 +45,7 @@ class FormController extends Controller
     {
         $user = Auth::user();
         $request->validate([ 
-            'template_id' => 'required|numeric',
+            'kategori_id' => 'required|numeric',
             'form_title_main' => 'required|string|max:255',
             'questions' => 'required|array',
             'questions.*.question' => 'required|string',
@@ -54,7 +55,7 @@ class FormController extends Controller
 
         $form = Form::create([
             'nama' => $request->form_title_main,
-            'template_id' => $request->template_id,
+            'kategori_id' => $request->kategori_id,
             'user_id' => $user->id
         ]);
 
@@ -62,7 +63,7 @@ class FormController extends Controller
             $form->questions()->create($question);
         }
 
-        return redirect()->route('formDetail', ['template' => $request->template_id])->with('success', 'Form Berhasil Dibuat.');
+        return redirect()->route('formDetail', ['kategori' => $request->kategori_id])->with('success', 'Template Berhasil Dibuat.');
     }
 
     /**
@@ -80,10 +81,10 @@ class FormController extends Controller
      */
     public function edit(Form $form)
     {
-        $template = Template::all();
+        $kategori = Kategori::all();
         return view('dashboard.form.edit',[
             'title' => 'edit',
-            'template' => $template,
+            'kategori' => $kategori,
             'form' => $form
         ]);
     }
@@ -99,7 +100,7 @@ class FormController extends Controller
     
     // Validasi input
     $request->validate([
-        'template_id' => 'required|numeric',
+        'kategori_id' => 'required|numeric',
         'form_title_main' => 'required|string|max:255',
         'questions' => 'required|array',
         'questions.*.question' => 'required|string',
@@ -117,7 +118,7 @@ class FormController extends Controller
     // Perbarui informasi form
     $form->update([
         'nama' => $request->form_title_main,
-        'template_id' => $request->template_id,
+        'kategori_id' => $request->kategori_id,
     ]);
 
     // Hapus pertanyaan yang ada
@@ -128,7 +129,7 @@ class FormController extends Controller
         $form->questions()->create($question);
     }
 
-    return redirect()->route('formDetail', ['template' => $request->template_id])->with('success', 'Form Berhasil Diperbarui.');
+    return redirect()->route('formDetail', ['kategori' => $request->kategori_id])->with('success', 'Template Berhasil Diperbarui.');
     }
 
 
@@ -137,10 +138,18 @@ class FormController extends Controller
      */
     public function destroy(Form $form)
     {
-        $template = $form->template_id;
+        $kategori = $form->kategori_id;
         DB::table('questions')->where('form_id', $form->id)->delete();
         DB::table('forms')->where('id', $form->id)->delete();
 
-        return redirect()->route('formDetail', ['template' => $template])->with('success', 'Form Berhasil Dihapus.');
+        return redirect()->route('formDetail', ['kategori' => $kategori])->with('success', 'Template Berhasil Dihapus.');
+    }
+
+    public function copyTemplate(){
+        $kategori = Kategori::all();
+        return view('dashboard.form.copy',[
+            'title' => 'Buat Template',
+            'kategori' => $kategori
+        ]);
     }
 }

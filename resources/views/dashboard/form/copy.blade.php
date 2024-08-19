@@ -16,9 +16,9 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Edit Formulir</h1>
 </div>
-<a href="{{ route('formDetail', ['kategori' => $form->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+<a href="/dashboard/menuform" class="btn btn-success mt-2 mb-2">Kembali</a>
 
-<form method="POST" action="/dashboard/menuform/form/{{ $form->id }}">
+{{-- <form method="POST" action="/dashboard/menuform/form/{{ $form->id }}">
     @csrf
     @method('PUT')
     <div class="mb-3">
@@ -258,5 +258,5 @@
         // Initialize existing editors
         document.querySelectorAll('.editor').forEach(initializeEditor);
     });
-</script>
+</script> --}}
 @endsection

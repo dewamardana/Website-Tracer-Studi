@@ -39,7 +39,7 @@ class JawabanController extends Controller
 
 
         $jawaban = Jawaban::create([
-            'template_id' => $request->template_id,
+            'kategori_id' => $request->kategori_id,
             'user_id' => $user->id,
             'form_id' => $request->form_id,
         ]);
@@ -64,7 +64,7 @@ class JawabanController extends Controller
             }
         }
 
-        return redirect()->route('showTemplate', ['template' => $form->template_id]);
+        return redirect()->route('showKategori', ['kategori' => $form->kategori_id]);
     }
 
     /**

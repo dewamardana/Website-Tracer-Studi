@@ -2,15 +2,15 @@
       <div class="position-sticky pt-3">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link {{ Request::is('dashboard/template*') ? 'active' : '' }}" aria-current="page" href="/dashboard/template">
+            <a class="nav-link {{ Request::is('dashboard/kategori*') ? 'active' : '' }}" aria-current="page" href="/dashboard/kategori">
               <span data-feather="home"></span>
-              Template
+              Kategori
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link {{ Request::is('dashboard/menuform*') ? 'active' : '' }}" aria-current="page" href="/dashboard/menuform">
               <span data-feather="file"></span>
-              Kuisioner
+              Template
             </a>
           </li>
           <li class="nav-item">

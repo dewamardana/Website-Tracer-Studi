@@ -9,29 +9,29 @@
     {{ session('status') }}
   </div>
   @endif
-  <a href="/dashboard/template/create" class="btn btn-primary mt-2 mb-2">New Template</a>
+  <a href="/dashboard/kategori/create" class="btn btn-primary mt-2 mb-2">Kategori Baru</a>
         <div class="table-responsive">
         <table class="table table-striped table-sm">
           <thead>
             <tr>
               <th scope="col">No</th>
-              <th scope="col">Nama</th>
+              <th scope="col">Nama kategori</th>
               <th scope="col">Deskripsi</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
-            @foreach ($template as $index => $t)
+            @foreach ($kategori as $index => $k)
             <tr>
               <td>{{ $index+1 }}</td>
-              <td>{{ $t->nama }}</td>
-              <td>{{ $t->deskripsi }}</td>
+              <td>{{ $k->nama }}</td>
+              <td>{{ $k->deskripsi }}</td>
               <td>
-                <a href="/dashboard/template/{{ $t->id }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
-                <form action="/dashboard/template/{{ $t->id }}" class="d-inline" method="POST">
+                <a href="/dashboard/kategori/{{ $k->id }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
+                <form action="/dashboard/kategori/{{ $k->id }}" class="d-inline" method="POST">
                   @csrf
                   @method('DELETE')
-                  <button class="badge bg-danger border-0" onclick="return confirm('Konfirmasi Menghapus Template')"><span data-feather="x-circle"></span></button>
+                  <button class="badge bg-danger border-0" onclick="return confirm('Konfirmasi Menghapus Kategori')"><span data-feather="x-circle"></span></button>
                 </form>
                 </td>
             </tr>

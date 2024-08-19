@@ -9,7 +9,7 @@
 <div id="questions-container">
     <div class="row justify-content-center">
         <div class="col-md-8 text-end">
-            <a href="{{ route('showTemplate', ['template' => $form->template_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+            <a href="{{ route('showKategori', ['kategori' => $form->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
         </div>
     </div>
     <div class="row justify-content-center">
@@ -48,7 +48,7 @@
                     </div>
                 @endforeach
                 <input type="hidden" value="{{ $form->id }}" name="form_id">
-                <input type="hidden" value="{{ $form->template_id }}" name="template_id">
+                <input type="hidden" value="{{ $form->kategori_id }}" name="kategori_id">
                 <button type="submit" class="btn btn-primary">Kirim</button>
             </form>
         </div>

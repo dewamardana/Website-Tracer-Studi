@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Form;
+use App\Models\Kategori;
 use App\Models\Template;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,19 +20,19 @@ class DashboardController extends Controller
     public function mainPage()
     {
         $user = Auth::user();
-        $template = Template::all();
+        $kategori = Kategori::all();
         return view('dashboard.form.menu',[
-            'title' => 'Form Template',
+            'title' => 'Form Kategori',
             'user' => $user->name,
-            'template' => $template,
+            'kategori' => $kategori,
         ]);
     }
 
-    public function templateForm($templateId)
+    public function kategoriForm($kategoriId)
     {
         $user = Auth::user();
-        $template = Template::findOrFail($templateId);
-        $forms = Form::where('template_id', $template->id)
+        $kategori = Kategori::findOrFail($kategoriId);
+        $forms = Form::where('kategori_id', $kategori->id)
                      ->where('user_id', $user->id)
                      ->get();
 
@@ -39,7 +40,7 @@ class DashboardController extends Controller
             'title' => 'Form', 
             'form' => $forms,
             'user' => $user->name,
-            'template' => $template
+            'kategori' => $kategori
         ]);
     }
     

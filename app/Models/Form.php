@@ -12,9 +12,9 @@ class Form extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
-    public function template(): BelongsTo
+    public function kategori(): BelongsTo
     {
-        return $this->BelongsTo(Template::class);
+        return $this->BelongsTo(Kategori::class);
     }
 
     public function user(): BelongsTo

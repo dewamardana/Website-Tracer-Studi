@@ -15,8 +15,8 @@
           <thead>
             <tr>
               <th scope="col">No</th>
+              <th scope="col">Nama Kategori</th>
               <th scope="col">Nama Template</th>
-              <th scope="col">Nama Formulir</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
@@ -24,7 +24,7 @@
             @foreach ($form as $index => $f)
             <tr>
               <td>{{ $index+1 }}</td>
-              <td>{{ $f->template->nama }}</td>
+              <td>{{ $f->kategori->nama }}</td>
               <td>{{ $f->nama }}</td>
               <td>
                 <a href="/dashboard/menuform/form/{{ $f->id }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>

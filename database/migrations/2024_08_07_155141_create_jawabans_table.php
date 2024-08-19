@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('jawabans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('template_id');
+            $table->unsignedBigInteger('kategori_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('form_id');
             $table->timestamps();
             
 
-            $table->foreign('template_id')->references('id')->on('templates');
+            $table->foreign('kategori_id')->references('id')->on('kategoris');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('form_id')->references('id')->on('forms');
         });

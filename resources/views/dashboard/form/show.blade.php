@@ -4,7 +4,7 @@
 <div class="pt-3 pb-2 mb-3 border-bottom">
     <div class="fs-1 fw-bold text-center">Formulir Detail</div>
 </div>
-<a href="{{ route('formDetail', ['template' => $form->template_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+<a href="{{ route('formDetail', ['kategori' => $form->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
 
 <div class="mb-4">
     <div class="fs-4">Judul Formulir</div>
@@ -12,8 +12,8 @@
 </div>
 
 <div class="mb-5">
-    <div class="fs-4">Nama Template</div>
-    <div class="fs-2 fw-bold">{{ $form->template->nama }}</div>
+    <div class="fs-4">Nama Kategori</div>
+    <div class="fs-2 fw-bold">{{ $form->kategori->nama }}</div>
 </div>
 
 <div id="questions-container">

@@ -23,7 +23,7 @@ class JawabanSeeder extends Seeder
         foreach ($formIds as $formId) {
             foreach ($users as $userId) {
                 DB::table('jawabans')->insert([
-                    'template_id' => DB::table('forms')->where('id', $formId)->value('template_id'),
+                    'kategori_id' => DB::table('forms')->where('id', $formId)->value('kategori_id'),
                     'user_id' => $userId,
                     'form_id' => $formId,
                 ]);
