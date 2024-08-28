@@ -4,20 +4,20 @@
 <div class="pt-3 pb-2 mb-3 border-bottom">
     <div class="fs-1 fw-bold text-center">Formulir Detail</div>
 </div>
-<a href="{{ route('formDetail', ['kategori' => $form->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+<a href="{{ route('templateDetail', ['kategori' => $template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
 
 <div class="mb-4">
     <div class="fs-4">Judul Formulir</div>
-    <div class="fs-2 fw-bold">{{ $form->nama }}</div>
+    <div class="fs-2 fw-bold">{{ $template->nama }}</div>
 </div>
 
 <div class="mb-5">
     <div class="fs-4">Nama Kategori</div>
-    <div class="fs-2 fw-bold">{{ $form->kategori->nama }}</div>
+    <div class="fs-2 fw-bold">{{ $template->kategori->nama }}</div>
 </div>
 
 <div id="questions-container">
-    @foreach ($form->questions as $index => $question)
+    @foreach ($template->questions as $index => $question)
         <div class="question-item mb-5" data-index="{{ $index }}">
             <div class="mb-3">
                 <div class="row">

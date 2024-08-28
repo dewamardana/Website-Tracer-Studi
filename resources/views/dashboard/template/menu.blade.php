@@ -26,8 +26,8 @@
             Buat Template Baru atau Salin dari Template yang sudah ada
           </div>
           <div class="modal-footer">
-            <a href="/dashboard/menuform/form/create" class="btn btn-primary mt-2 mb-2">Baru</a>
-            <a href="/dashboard/menuform/form/copy" class="btn btn-primary mt-2 mb-2">Salin</a>
+            <a href="/dashboard/menutemplate/template/create" class="btn btn-primary mt-2 mb-2">Baru</a>
+            <a href="/dashboard/menutemplate/template/copy" class="btn btn-primary mt-2 mb-2">Salin</a>
           </div>
         </div>
       </div>
@@ -49,23 +49,11 @@
               <td>{{ $k->nama }}</td>
               <td>{{ $k->deskripsi }}</td>
               <td>
-                <a href="/dashboard/menuform/{{ $k->id }}" class="badge bg-success"><span data-feather="eye"></span></a>
+                <a href="/dashboard/menutemplate/{{ $k->id }}" class="badge bg-success"><span data-feather="eye"></span></a>
               </td>
             </tr>
             @endforeach
           </tbody>
         </table>
       </div>
-
-      <script>
-        function showAlert() {
-          const choice = confirm("Pilih 'Baru' untuk membuat formulir baru, atau 'Cancel' untuk menyalin formulir.");
-
-          if (choice) {
-            window.location.href = '/dashboard/menuform/form/create'; // URL untuk membuat formulir baru
-          } else {
-            window.location.href = '/dashboard/menuform/form/copy'; // URL untuk menyalin formulir
-          }
-        }
-      </script>
 @endsection

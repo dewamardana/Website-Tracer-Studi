@@ -13,19 +13,38 @@
     </div>
 @endif
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Edit Formulir</h1>
+<!-- Modal -->
+<div class="modal fade" id="newTemplate" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Peringatan</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>{{ $judul }}</h4>
+                <p>{{ $pesan }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+                <a href="{{ route('templateDetail', ['kategori' => $template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+            </div>
+        </div>
+    </div>
 </div>
-<a href="{{ route('formDetail', ['kategori' => $form->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
 
-<form method="POST" action="/dashboard/menuform/form/{{ $form->id }}">
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Edit Template</h1>
+</div>
+<a href="{{ route('templateDetail', ['kategori' => $template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+
+<form method="POST" action="/dashboard/menutemplate/template">
     @csrf
-    @method('PUT')
     <div class="mb-3">
         <label for="form-title-input" class="form-label fs-2 fw-bold">Judul Form</label>
-        <input type="text" class="form-control @error('form_title_main') is-invalid @enderror" id="form-title-input" name="form_title_main"
-        value="{{ old('form_title_main', $form->nama) }}" required>
-        @error('form_title_main')
+        <input type="text" class="form-control @error('nama') is-invalid @enderror" id="form-title-input" name="nama"
+        value="{{ old('nama', $template->nama) }}" required>
+        @error('nama')
             <div class="alert alert-danger">{{ $message }}</div>
         @enderror
     </div>
@@ -35,7 +54,7 @@
         <select class="form-select form-select-lg mb-3 @error('kategori_id') is-invalid @enderror" aria-label="Large select example" id="kategori_id" name="kategori_id" required>
             <option selected disabled>Pilih Kategori</option>
             @foreach ($kategori as $t)
-                <option value="{{ $t->id }}" {{ old('kategori_id', $form->kategori_id) == $t->id ? 'selected' : '' }}>{{ $t->nama }}</option>
+                <option value="{{ $t->id }}" {{ old('kategori_id', $template->kategori_id) == $t->id ? 'selected' : '' }}>{{ $t->nama }}</option>
             @endforeach
         </select>
         @error('kategori_id')
@@ -44,7 +63,7 @@
     </div>
     
     <div id="questions-container">
-        @foreach($form->questions as $index => $question)
+        @foreach(old('questions', $template->questions) as $index => $question)
             <div class="question-item mb-4" data-index="{{ $index }}">
                 <div class="mb-3">
                     <div class="row">
@@ -61,27 +80,27 @@
                         <button type="button" class="btn" data-command="underline"><u>U</u></button>
                         <button type="button" class="btn" data-command="createLink">Link</button>
                     </div>
-                    <div contenteditable="true" class="editor form-control">{{ old('questions.'.$index.'.question', $question->question) }}</div>
-                    <input type="hidden" name="questions[{{ $index }}][question]" class="question-content" value="{{ old('questions.'.$index.'.question', $question->question) }}">
+                    <div contenteditable="true" class="editor form-control">{{ old('questions.'.$index.'.question', $question['question'] ?? '') }}</div>
+                    <input type="hidden" name="questions[{{ $index }}][question]" class="question-content" value="{{ old('questions.'.$index.'.question', $question['question'] ?? '') }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Type</label>
                     <select class="form-control type-select" name="questions[{{ $index }}][type]" required>
-                        <option value="text" {{ old('questions.'.$index.'.type', $question->type) == 'text' ? 'selected' : '' }}>Text</option>
-                        <option value="radio" {{ old('questions.'.$index.'.type', $question->type) == 'radio' ? 'selected' : '' }}>Radio</option>
-                        <option value="dropdown" {{ old('questions.'.$index.'.type', $question->type) == 'dropdown' ? 'selected' : '' }}>Dropdown</option>
-                        <option value="checkbox" {{ old('questions.'.$index.'.type', $question->type) == 'checkbox' ? 'selected' : '' }}>Checkbox</option>
-                        <option value="date" {{ old('questions.'.$index.'.type', $question->type) == 'date' ? 'selected' : '' }}>Date</option>
-                        <option value="email" {{ old('questions.'.$index.'.type', $question->type) == 'email' ? 'selected' : '' }}>Email</option>
-                        <option value="number" {{ old('questions.'.$index.'.type', $question->type) == 'number' ? 'selected' : '' }}>Number</option>
-                        <option value="range" {{ old('questions.'.$index.'.type', $question->type) == 'range' ? 'selected' : '' }}>Range</option>
-                        <option value="time" {{ old('questions.'.$index.'.type', $question->type) == 'time' ? 'selected' : '' }}>Time</option>
+                        <option value="text" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'text' ? 'selected' : '' }}>Text</option>
+                        <option value="radio" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'radio' ? 'selected' : '' }}>Radio</option>
+                        <option value="dropdown" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'dropdown' ? 'selected' : '' }}>Dropdown</option>
+                        <option value="checkbox" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'checkbox' ? 'selected' : '' }}>Checkbox</option>
+                        <option value="date" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'date' ? 'selected' : '' }}>Date</option>
+                        <option value="email" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'email' ? 'selected' : '' }}>Email</option>
+                        <option value="number" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'number' ? 'selected' : '' }}>Number</option>
+                        <option value="range" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'range' ? 'selected' : '' }}>Range</option>
+                        <option value="time" {{ old('questions.'.$index.'.type', $question['type'] ?? '') == 'time' ? 'selected' : '' }}>Time</option>
                     </select>
                 </div>
-                <div class="mb-3 options-container" style="display: {{ in_array(old('questions.'.$index.'.type', $question->type), ['radio', 'dropdown', 'checkbox']) ? 'block' : 'none' }};">
+                <div class="mb-3 options-container" style="display: {{ in_array(old('questions.'.$index.'.type', $question['type'] ?? ''), ['radio', 'dropdown', 'checkbox']) ? 'block' : 'none' }};">
                     <label class="form-label">Options</label>
                     <div class="options-list">
-                        @foreach(old('questions.'.$index.'.options',  $question->options ?? []) as $option)
+                        @foreach(old('questions.'.$index.'.options', $question['options'] ?? []) as $option)
                             <div class="input-group mb-2">
                                 <input type="text" class="form-control" name="questions[{{ $index }}][options][]" value="{{ $option }}" placeholder="Option">
                                 <button type="button" class="btn btn-danger remove-option">Remove</button>
@@ -99,13 +118,13 @@
                         </div>
                         <div class="col-sm-1 col-md-1">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="questions[{{ $index }}][required]" value="1" {{ old('questions.'.$index.'.required', $question->required) == '1' ? 'checked' : '' }}>
+                                <input class="form-check-input" type="radio" name="questions[{{ $index }}][required]" value="1" {{ old('questions.'.$index.'.required', $question['required'] ?? '') == '1' ? 'checked' : '' }}>
                                 <label class="form-check-label">Ya </label>
                             </div>
                         </div>
                         <div class="col-sm-1 col-md-1">
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="questions[{{ $index }}][required]" value="0" {{ old('questions.'.$index.'.required', $question->required) == '0' ? 'checked' : '' }}>
+                                <input class="form-check-input" type="radio" name="questions[{{ $index }}][required]" value="0" {{ old('questions.'.$index.'.required', $question['required'] ?? '') == '0' ? 'checked' : '' }}>
                                 <label class="form-check-label">Tidak </label>
                             </div>
                         </div>
@@ -118,29 +137,18 @@
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        let questionIndex = {{ count($form->questions) }};
-        
-        function toggleOptions(container, type) {
-            const optionsContainer = container.querySelector('.options-container');
-            optionsContainer.style.display = ['radio', 'dropdown', 'checkbox'].includes(type) ? 'block' : 'none';
-        }
+@if(session('modal_shown') && $warning == 1)
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = new bootstrap.Modal(document.getElementById('newTemplate'));
+            modal.show();
+        });
+    </script>
+@endif
 
-        function initializeToolbar(editor) {
-            const toolbar = editor.previousElementSibling;
-            toolbar.querySelectorAll('button').forEach(button => {
-                button.addEventListener('click', () => {
-                    const command = button.getAttribute('data-command');
-                    if (command === 'createLink') {
-                        const url = prompt('Enter the link here: ', 'http://');
-                        document.execCommand(command, false, url);
-                    } else {
-                        document.execCommand(command, false, null);
-                    }
-                });
-            });
-        }
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let questionIndex = {{ count(old('questions', $template->questions)) }};
 
         function initializeEditor(editor) {
             editor.addEventListener('input', () => {
@@ -148,6 +156,20 @@
                 hiddenInput.value = editor.innerHTML;
             });
             initializeToolbar(editor);
+        }
+
+        function initializeToolbar(editor) {
+            const toolbar = editor.previousElementSibling;
+            toolbar.querySelectorAll('button').forEach(button => {
+                button.addEventListener('click', () => {
+                    document.execCommand(button.getAttribute('data-command'), false, null);
+                });
+            });
+        }
+
+        function toggleOptions(container, type) {
+            const optionsContainer = container.querySelector('.options-container');
+            optionsContainer.style.display = ['radio', 'dropdown', 'checkbox'].includes(type) ? 'block' : 'none';
         }
 
         function updateRemoveButtons() {

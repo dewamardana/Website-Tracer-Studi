@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('deskripsi');
-            $table->unsignedBigInteger('user_id')->default(0);
+            $table->unsignedBigInteger('kategori_id')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
+            $table->foreign('kategori_id')->references('id')->on('kategoris');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }

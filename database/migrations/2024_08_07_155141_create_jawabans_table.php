@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('kategori_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('form_id');
+            $table->unsignedBigInteger('template_id');
             $table->timestamps();
             
 
             $table->foreign('kategori_id')->references('id')->on('kategoris');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('form_id')->references('id')->on('forms');
+            $table->foreign('template_id')->references('id')->on('templates');
         });
     }
 

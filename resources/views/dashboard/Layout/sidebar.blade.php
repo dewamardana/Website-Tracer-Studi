@@ -8,7 +8,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link {{ Request::is('dashboard/menuform*') ? 'active' : '' }}" aria-current="page" href="/dashboard/menuform">
+            <a class="nav-link {{ Request::is('dashboard/menutemplate*') ? 'active' : '' }}" aria-current="page" href="/dashboard/menutemplate">
               <span data-feather="file"></span>
               Template
             </a>

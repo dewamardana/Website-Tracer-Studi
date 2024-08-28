@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('form_id'); // Foreign key for the form to which the question belongs
+            $table->unsignedBigInteger('template_id'); // Foreign key for the form to which the question belongs
             $table->text('question'); // The question text
             $table->string('type'); // Type of the question (text, radio, dropdown, etc.)
             $table->json('options')->nullable(); // Options for questions like radio, checkbox, dropdown
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Foreign key constraint
-            $table->foreign('form_id')->references('id')->on('forms')->onDelete('cascade');
+            $table->foreign('template_id')->references('id')->on('templates')->onDelete('cascade');
         });
     }
 

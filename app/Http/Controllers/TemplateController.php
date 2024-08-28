@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kategori;
 use App\Models\Template;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class TemplateController extends Controller
@@ -14,13 +14,7 @@ class TemplateController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $template = Template::all();
-        return view('dashboard.template.index',[
-            'title' => 'Template',
-            'user' => $user->name,
-            'template' => $template,
-        ]);
+        //
     }
 
     /**
@@ -28,7 +22,11 @@ class TemplateController extends Controller
      */
     public function create()
     {
-        return view('dashboard.template.create');
+        $kategori= Kategori::all();
+        return view('dashboard.template.create',[
+            'title' => 'Template Create',
+            'kategori' => $kategori,
+        ]);
     }
 
     /**
@@ -37,16 +35,26 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $validated = $request->validate([
-        'nama' => 'required|unique:templates|max:100',
-        'deskripsi' => 'required',
-    ]);
+        $request->validate([ 
+            'kategori_id' => 'required|numeric',
+            'nama' => 'required|unique:templates|string|max:255',
+            'questions' => 'required|array',
+            'questions.*.question' => 'required|string',
+            'questions.*.type' => 'required|string',
 
-        $validated['user_id'] = $user->id;
+        ]);
 
-        DB::table('templates')->insert($validated);
-        return redirect('/dashboard/template')->with('status', 'Template Surat Berhasil Dibuat');
-        
+        $form = Template::create([
+            'nama' => $request->nama,
+            'kategori_id' => $request->kategori_id,
+            'user_id' => $user->id
+        ]);
+
+        foreach ($request->questions as $question) {
+            $form->questions()->create($question);
+        }
+
+        return redirect()->route('templateDetail', ['kategori' => $request->kategori_id])->with('success', 'Template Berhasil Dibuat.');
     }
 
     /**
@@ -54,7 +62,9 @@ class TemplateController extends Controller
      */
     public function show(Template $template)
     {
-        //
+        $template = Template::with('questions')->findOrFail($template->id);
+
+        return view('dashboard.template.show', compact('template'));
     }
 
     /**
@@ -62,8 +72,10 @@ class TemplateController extends Controller
      */
     public function edit(Template $template)
     {
+        $kategori = Kategori::all();
         return view('dashboard.template.edit',[
             'title' => 'edit',
+            'kategori' => $kategori,
             'template' => $template
         ]);
     }
@@ -74,23 +86,38 @@ class TemplateController extends Controller
     public function update(Request $request, Template $template)
     {
         $user = Auth::user();
-        $validated = $request->validate([
-        'nama' => 'required|max:100',
-        'deskripsi' => 'required',
-    ]);
+    
+        // Validasi input
+        $request->validate([
+            'kategori_id' => 'required|numeric',
+            'nama' => 'required|string|max:255',
+            'questions' => 'required|array',
+            'questions.*.question' => 'required|string',
+            'questions.*.type' => 'required|string',
+        ]);
 
-        $validated['user_id'] = $user->id;
+        // Temukan form yang akan diperbarui
+        $form = Template::findOrFail($template->id);
 
-        $validasinama = Template::where('id', '!=', $template->id)//yang id-nya tidak sama dengan $id
-                                ->where('nama', $request->nama)
-                                ->first();
-        if ($validasinama) {
-            return back()->with('error', 'Slug sudah ada, coba yang lain');
-        } else {
-            DB::table('templates')->where('id', $template->id)->update($validated);
-            return redirect('/dashboard/template')->with('status', 'Template Surat Berhasil Diedit'); 
+        // Pastikan hanya user yang membuat form yang dapat memperbarui
+        if ($form->user_id !== $user->id) {
+            return redirect()->back()->with('error', 'You do not have permission to edit this form.');
         }
 
+        // Perbarui informasi form
+        $form->update([
+            'nama' => $request->nama,
+            'kategori_id' => $request->kategori_id,
+        ]);
+
+        // Hapus pertanyaan yang ada
+        $form->questions()->delete();
+
+        // Tambahkan pertanyaan baru
+        foreach ($request->questions as $question) {
+            $form->questions()->create($question);
+        }
+        return redirect()->route('templateDetail', ['kategori' => $request->kategori_id])->with('success', 'Template Berhasil Diperbarui.');
     }
 
     /**
@@ -98,7 +125,28 @@ class TemplateController extends Controller
      */
     public function destroy(Template $template)
     {
-        DB::table('templates')->where('id', $template->id)->delete();
-        return redirect('/dashboard/template')->with('status', 'Template Surat Berhasil Dihapus');
+        //
+    }
+
+
+    public function checkAndRedirect($id)
+    {
+        // Cek apakah tabel template sudah berisi data
+        $templateExists = Template::exists($id);
+
+        if (!$templateExists) {
+            $kategori = Kategori::all();
+            $template = Template::findOrFail($id);
+            return view('dashboard.template.editTemplate',[
+                'title' => 'edit',
+                'warning' => session()->has('errors') ? 0 : 1,
+                'judul' => 'Template ini Sudah berisi data',
+                'pesan' => 'Tekan OK untuk Membuat Duplikasi Template',
+                'kategori' => $kategori,
+                'template' => $template
+            ]);
+        } else {
+            return redirect()->action([TemplateController::class, 'edit'], ['template' => $id]);
+        }
     }
 }

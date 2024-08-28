@@ -152,4 +152,23 @@ class FormController extends Controller
             'kategori' => $kategori
         ]);
     }
+
+
+    public function checkAndRedirect($id)
+    {
+        // Cek apakah template dengan id tertentu sudah ada
+        $template = Template::find($id);
+
+        if ($template) {
+            // // Jika template sudah ada, berikan peringatan dan buat duplikat
+            // $newTemplate = $template->replicate(); // Menggandakan template
+            // $newTemplate->save(); // Menyimpan duplikat dengan id baru
+            
+            // Redirect ke halaman edit template baru dengan pesan peringatan
+            return redirect()->with('warning', 'Template sudah ada.');
+        } else {
+            // Jika template belum ada, arahkan ke halaman edit
+            return redirect()->route('editTemplate', ['id' => $id]);
+        }
+    }
 }

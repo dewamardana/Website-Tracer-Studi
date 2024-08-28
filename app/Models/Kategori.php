@@ -20,8 +20,8 @@ class Kategori extends Model
         return $this->BelongsTo(User::class);
     }
 
-    public function form(): HasMany
+    public function template(): HasMany
     {
-        return $this->hasMany(Form::class);
+        return $this->hasMany(Template::class);
     }
 }

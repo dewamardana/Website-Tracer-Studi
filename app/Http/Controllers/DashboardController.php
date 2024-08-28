@@ -20,27 +20,25 @@ class DashboardController extends Controller
     public function mainPage()
     {
         $user = Auth::user();
-        $kategori = Kategori::all();
-        return view('dashboard.form.menu',[
-            'title' => 'Form Kategori',
+       $kategori = Kategori::all();
+        return view('dashboard.template.menu',[
+            'title' => 'Template Kategori',
             'user' => $user->name,
-            'kategori' => $kategori,
-        ]);
+            'kategori' =>$kategori,
+        ]); 
     }
 
-    public function kategoriForm($kategoriId)
+    public function TemplatePage($kategoriId)
     {
         $user = Auth::user();
         $kategori = Kategori::findOrFail($kategoriId);
-        $forms = Form::where('kategori_id', $kategori->id)
-                     ->where('user_id', $user->id)
-                     ->get();
+        $template = Template::where('kategori_id',$kategori->id)->get();
 
-        return view('dashboard.form.index', [
-            'title' => 'Form', 
-            'form' => $forms,
+        return view('dashboard.template.index', [
+            'title' => 'Template', 
+            'template' => $template,
             'user' => $user->name,
-            'kategori' => $kategori
+            'kategori' =>$kategori
         ]);
     }
     

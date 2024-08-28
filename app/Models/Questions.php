@@ -21,9 +21,9 @@ class Questions extends Model
     }
 
 
-    public function form(): BelongsTo
+    public function template(): BelongsTo
     {
-        return $this->belongsTo(Form::class);
+        return $this->belongsTo(Template::class);
     }
 
 
