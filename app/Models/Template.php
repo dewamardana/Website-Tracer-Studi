@@ -19,7 +19,7 @@ class Template extends Model
 
     public function user(): BelongsTo
     {
-        return $this->BelongsTo(user::class);
+        return $this->BelongsTo(User::class);
     }
 
     public function questions(): HasMany
@@ -27,8 +27,13 @@ class Template extends Model
         return $this->hasMany(Questions::class);
     }
 
-     public function jawaban(): HasMany
+    public function jawaban(): HasMany
     {
         return $this->hasMany(Jawaban::class);
+    }
+
+    public function form(): HasMany
+    {
+        return $this->hasMany(Form::class);
     }
 }

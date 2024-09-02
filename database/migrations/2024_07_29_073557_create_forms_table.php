@@ -14,11 +14,16 @@ return new class extends Migration
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->unsignedBigInteger('kategori_id')->nullable();
+            $table->unsignedBigInteger('template_id');
+            $table->string('tautan')->nullable();
+            $table->date('open');
+            $table->date('close');
+            $table->integer('tahun_ajaran');
+
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
-            $table->foreign('kategori_id')->references('id')->on('kategoris');
+            $table->foreign('template_id')->references('id')->on('templates');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }

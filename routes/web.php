@@ -26,13 +26,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('/dashboard/kategori', KategoriController::class);
-    Route::get('/dashboard/menutemplate/template/copy', [TemplateController::class, 'copyTemplate']);
+    Route::get('/dashboard/menutemplate/template/copy', [TemplateController::class, 'pilihTemplate'])->name('copyTemplate');
+    Route::get('/dashboard/menutemplate/template/copy/{id}', [TemplateController::class, 'copyTemplate']);
+    Route::get('/dashboard/menutemplate/template/{id}/duplicate', [TemplateController::class, 'duplicates'])->name('duplicateTemplate');
     Route::get('/dashboard/menutemplate/template/{id}/check', [TemplateController::class, 'checkAndRedirect'])->name('checkTemplate');
     Route::resource('/dashboard/menutemplate/template', TemplateController::class);
+    Route::resource('/dashboard/form', FormController::class);
     Route::resource('/detail/answer', JawabanController::class);
+    Route::get('/detail/template/{id}', [HomeController::class, 'form']);
     Route::get('/dashboard/menutemplate/form/questionCreate/{form}', [QuestionController::class, 'makeQuetion']);
     
-    
+     
 });
 
 require __DIR__.'/auth.php';

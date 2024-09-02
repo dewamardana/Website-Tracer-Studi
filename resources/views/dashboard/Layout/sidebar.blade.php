@@ -14,6 +14,12 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link {{ Request::is('dashboard/form*') ? 'active' : '' }}" aria-current="page" href="/dashboard/form">
+              <span data-feather="file"></span>
+              Formulir
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link {{ Request::is('dashboard/user') ? 'active' : '' }}" href="dashboard/user">
               <span data-feather="file"></span>
               User

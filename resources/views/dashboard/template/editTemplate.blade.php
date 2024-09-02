@@ -13,26 +13,6 @@
     </div>
 @endif
 
-<!-- Modal -->
-<div class="modal fade" id="newTemplate" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5">Peringatan</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h4>{{ $judul }}</h4>
-                <p>{{ $pesan }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-                <a href="{{ route('templateDetail', ['kategori' => $template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Edit Template</h1>
 </div>
@@ -136,15 +116,6 @@
     <button type="button" class="btn btn-secondary" id="add-question">Add Question</button>
     <button type="submit" class="btn btn-primary">Update</button>
 </form>
-
-@if(session('modal_shown') && $warning == 1)
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = new bootstrap.Modal(document.getElementById('newTemplate'));
-            modal.show();
-        });
-    </script>
-@endif
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

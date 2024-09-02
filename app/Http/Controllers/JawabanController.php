@@ -39,7 +39,7 @@ class JawabanController extends Controller
 
 
         $jawaban = Jawaban::create([
-            'kategori_id' => $request->kategori_id,
+            'template_id' => $request->template_id,
             'user_id' => $user->id,
             'form_id' => $request->form_id,
         ]);
@@ -64,7 +64,7 @@ class JawabanController extends Controller
             }
         }
 
-        return redirect()->route('showKategori', ['kategori' => $form->kategori_id]);
+        return redirect()->route('showKategori', ['kategori' => $form->template->kategori_id]);
     }
 
     /**
@@ -74,7 +74,7 @@ class JawabanController extends Controller
     {
         // $form = Form::with('questions')->findOrFail($jawaban->id);;
         $form = Form::findOrFail($id);
-        $questions = Questions::where('form_id', $id)->get();
+        $questions = Questions::where('template_id', $id)->get();
 
         return view('homepage.answer', [
             'title' => $form->nama,

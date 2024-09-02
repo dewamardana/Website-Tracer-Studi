@@ -2,20 +2,20 @@
 
 @section('content')
 
-<div class="section-title text-center mb-5">
+<div class="section-title text-center mb-5 mt-5">
     <p class="fs-1 fw-bold">Data <span> {{ $form->nama }}</span></p>
 </div>
 
 <div id="questions-container">
     <div class="row justify-content-center">
         <div class="col-md-8 text-end">
-            <a href="{{ route('showKategori', ['kategori' => $form->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+            <a href="{{ route('showKategori', ['kategori' => $form->template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
         </div>
     </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form action="/detail/answer" method="POST">
-                @csrf
+                @csrf  
                 @foreach ($questions as $question)
                     <div class="form-group">
                         <label> {!! $question->question !!}</label>
@@ -48,7 +48,7 @@
                     </div>
                 @endforeach
                 <input type="hidden" value="{{ $form->id }}" name="form_id">
-                <input type="hidden" value="{{ $form->kategori_id }}" name="kategori_id">
+                <input type="hidden" value="{{ $form->template_id }}" name="template_id">
                 <button type="submit" class="btn btn-primary">Kirim</button>
             </form>
         </div>

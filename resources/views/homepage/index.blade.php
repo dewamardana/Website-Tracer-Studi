@@ -68,7 +68,7 @@
                             <div class="card-body">
                                 <h5 class="card-title text-center fw-bold">{{ $k->nama }}</h5>
                                 <p class="card-text">{{ $k->deskripsi }}</p>
-                                <a href="/detail/{{ $k->id }}" class="btn btn-primary">Baca Selengkapnya</a>
+                                <a href="/detail/{{ $k->id }}" class="btn btn-primary">Lihat Template</a>
                             </div>
                         </div>
                     </div>

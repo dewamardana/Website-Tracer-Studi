@@ -12,14 +12,19 @@ class Form extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
-    public function kategori(): BelongsTo
+    // public function kategori(): BelongsTo
+    // {
+    //     return $this->BelongsTo(Kategori::class);
+    // }
+    
+        public function template(): BelongsTo
     {
-        return $this->BelongsTo(Kategori::class);
+        return $this->BelongsTo(Template::class);
     }
 
     public function user(): BelongsTo
     {
-        return $this->BelongsTo(user::class);
+        return $this->BelongsTo(User::class);
     }
 
     public function questions(): HasMany

@@ -20,7 +20,7 @@ class DashboardController extends Controller
     public function mainPage()
     {
         $user = Auth::user();
-       $kategori = Kategori::all();
+        $kategori = Kategori::all();
         return view('dashboard.template.menu',[
             'title' => 'Template Kategori',
             'user' => $user->name,
@@ -38,7 +38,7 @@ class DashboardController extends Controller
             'title' => 'Template', 
             'template' => $template,
             'user' => $user->name,
-            'kategori' =>$kategori
+            'kategori' =>$kategori,
         ]);
     }
     

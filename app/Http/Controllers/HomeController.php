@@ -20,11 +20,21 @@ class HomeController extends Controller
 
     public function show($KategoriId)
     {   
-        $form = Form::where('kategori_id', $KategoriId)->get();
+        $template = Template::where('kategori_id', $KategoriId)->get();
         $title = Kategori::where('id', $KategoriId)->first();
         return view('homepage.detail',[
-            'title' => $title->nama,
+            'template' => $template,
+            'title' =>$title->nama
+        ]);
+    }
+
+    public function form($templateId)
+    {   
+        $form = Form::where('template_id', $templateId)->get();
+        $title = Template::where('id', $templateId)->first();
+        return view('homepage.form',[
             'form' => $form,
+            'title' =>$title->nama
         ]);
     }
 

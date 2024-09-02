@@ -15,13 +15,12 @@
 
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Edit Template</h1>
+    <h1 class="h2">Salin Template</h1>
 </div>
 <a href="{{ route('templateDetail', ['kategori' => $template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
 
-<form method="POST" action="/dashboard/menutemplate/template/{{ $template->id }}">
+<form method="POST" action="/dashboard/menutemplate/template">
     @csrf
-    @method('PUT')
     <div class="mb-3">
         <label for="form-title-input" class="form-label fs-2 fw-bold">Judul Form</label>
         <input type="text" class="form-control @error('nama') is-invalid @enderror" id="form-title-input" name="nama"

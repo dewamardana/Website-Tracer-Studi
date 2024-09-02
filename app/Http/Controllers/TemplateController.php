@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Form;
 use App\Models\Kategori;
 use App\Models\Template;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class TemplateController extends Controller
 {
@@ -125,28 +128,69 @@ class TemplateController extends Controller
      */
     public function destroy(Template $template)
     {
-        //
+        $kategori = $template->kategori_id;
+        DB::table('questions')->where('template_id', $template->id)->delete();
+        DB::table('templates')->where('id', $template->id)->delete();
+
+        return redirect()->back()->with('success', 'Template Berhasil Dihapus.');
     }
 
 
     public function checkAndRedirect($id)
     {
         // Cek apakah tabel template sudah berisi data
-        $templateExists = Template::exists($id);
+        $templateExists = Form::where('template_id', $id)->first();
 
-        if (!$templateExists) {
-            $kategori = Kategori::all();
-            $template = Template::findOrFail($id);
-            return view('dashboard.template.editTemplate',[
-                'title' => 'edit',
-                'warning' => session()->has('errors') ? 0 : 1,
-                'judul' => 'Template ini Sudah berisi data',
-                'pesan' => 'Tekan OK untuk Membuat Duplikasi Template',
-                'kategori' => $kategori,
-                'template' => $template
+        if ($templateExists) {
+               
+                return redirect()->back()->with([
+                'showModal' => true,
+                'modalTitle' => 'Template ini Sudah berisi data',
+                'modalMessage' => 'Tekan OK untuk Membuat Duplikasi Template',
+                'id' => $id,
             ]);
         } else {
             return redirect()->action([TemplateController::class, 'edit'], ['template' => $id]);
         }
     }
+
+
+    public function duplicates($id)
+    {
+        // Cek apakah tabel template sudah berisi data
+         $kategori = Kategori::all();
+        $template = Template::findOrFail($id);
+            return view('dashboard.template.editTemplate',[
+                'title' => 'edit',
+                'kategori' => $kategori,
+                'template' => $template
+            ]);
+    }
+
+    public function pilihTemplate()
+    {
+        // Cek apakah tabel template sudah berisi data
+        $template = Template::all();
+            return view('dashboard.template.copy',[
+                'title' => 'Salin Template',
+                'template' => $template,
+                'back' => false,
+            ]);
+    }
+
+    public function copyTemplate($id)
+    {
+        $template = Template::findOrFail($id);
+        $kategori = Kategori::all();
+        
+        return view('dashboard.template.copyTemplate',[
+            'title' => 'Salin Template',
+            'kategori' => $kategori,
+            'template' => $template
+        ]);
+    }
+        
 }
+
+
+

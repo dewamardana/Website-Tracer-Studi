@@ -9,6 +9,29 @@
     {{ session('success') }}
   </div>
   @endif
+
+@if(session('showModal'))
+<!-- Modal -->
+<div class="modal fade" id="newTemplate" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Peringatan</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>{{ session('modalTitle') }}</h4>
+                <p>{{ session('modalMessage') }}</p>
+            </div>
+            <div class="modal-footer">
+              <a href="{{ route('duplicateTemplate', ['id' => session('id')]) }}" class="btn btn-primary mt-2 mb-2">OK</a>
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal">Batal</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+
   <a href="/dashboard/menutemplate" class="btn btn-success mt-2 mb-2">Kembali</a>
         <div class="table-responsive">
         <table class="table table-striped table-sm">
@@ -22,14 +45,14 @@
           </thead>
           <tbody>
             @foreach ($template as $index => $t)
-            <tr>
+            <tr class="{{ Auth::user()->id == $t->user_id ? 'table-success' : '' }}">
               <td>{{ $index+1 }}</td>
               <td>{{ $t->kategori->nama }}</td>
               <td>{{ $t->nama }}</td>
               <td>
                 <a href="/dashboard/menutemplate/template/{{ $t->id }}/check" class="badge bg-warning"><span data-feather="edit"></span></a>
                 <a href="/dashboard/menutemplate/template/{{ $t->id }}" class="badge bg-info"><span data-feather="eye"></span></a>
-                <form action="/dashboard/menutemplate/form/{{ $t->id }}" class="d-inline" method="POST">
+                <form action="/dashboard/menutemplate/template/{{ $t->id }}" class="d-inline" method="POST">
                   @csrf
                   @method('DELETE')
                   <button class="badge bg-danger border-0" onclick="return confirm('Konfirmasi Menghapus Formulir ?')"><span data-feather="x-circle"></span></button>
@@ -40,4 +63,12 @@
           </tbody>
         </table>
       </div>
+    @if(session('showModal'))
+      <script>
+          document.addEventListener('DOMContentLoaded', () => {
+              const modal = new bootstrap.Modal(document.getElementById('newTemplate'));
+              modal.show();
+          });
+      </script>
+  @endif
 @endsection
