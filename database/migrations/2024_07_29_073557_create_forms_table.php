@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('forms', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
+            $table->string('slug');
             $table->unsignedBigInteger('template_id');
             $table->string('tautan')->nullable();
             $table->date('open');

@@ -50,9 +50,9 @@
               <td>{{ $t->kategori->nama }}</td>
               <td>{{ $t->nama }}</td>
               <td>
-                <a href="/dashboard/menutemplate/template/{{ $t->id }}/check" class="badge bg-warning"><span data-feather="edit"></span></a>
-                <a href="/dashboard/menutemplate/template/{{ $t->id }}" class="badge bg-info"><span data-feather="eye"></span></a>
-                <form action="/dashboard/menutemplate/template/{{ $t->id }}" class="d-inline" method="POST">
+                <a href="/dashboard/menutemplate/template/{{ $t->slug }}/check" class="badge bg-warning"><span data-feather="edit"></span></a>
+                <a href="/dashboard/menutemplate/template/{{ $t->slug }}" class="badge bg-info"><span data-feather="eye"></span></a>
+                <form action="/dashboard/menutemplate/template/{{ $t->slug }}" class="d-inline" method="POST">
                   @csrf
                   @method('DELETE')
                   <button class="badge bg-danger border-0" onclick="return confirm('Konfirmasi Menghapus Formulir ?')"><span data-feather="x-circle"></span></button>

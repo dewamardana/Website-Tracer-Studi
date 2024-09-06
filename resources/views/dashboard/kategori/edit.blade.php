@@ -18,7 +18,7 @@
         <h2 class="text-center">Edit Kategori</h2>
         <div class="row justify-content-md-center">
             <div class="col col-lg-6">
-                <form method="POST" action="/dashboard/kategori/{{ $kategori->id }}">
+                <form method="POST" action="/dashboard/kategori/{{ $kategori->slug }}">
                     @csrf
                     @method('PUT')
                     <div class="mb-3">

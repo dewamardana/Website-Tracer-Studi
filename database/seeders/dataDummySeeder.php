@@ -25,7 +25,8 @@ class dataDummySeeder extends Seeder
 
         // Insert kategoris and get their IDs
         $kategoriIds = [];
-        foreach ($kategoris as $kategori) {
+        foreach ($kategoris as $kategori) { 
+            $kategori['slug'] = Str::of($kategori['nama'])->slug('-');
             $kategoriIds[$kategori['nama']] = DB::table('kategoris')->insertGetId($kategori);
         }
 
@@ -64,6 +65,7 @@ class dataDummySeeder extends Seeder
             foreach ($templateSet['templates'] as $t) {
                 $templateIds[$t['nama']] = DB::table('templates')->insertGetId([
                     'nama' => $t['nama'],
+                    'slug' => Str::of($t['nama'])->slug('-'),
                     'kategori_id' => $templateSet['kategori_id'],
                     'user_id' => $t['user_id'],
                 ]);
@@ -345,8 +347,13 @@ class dataDummySeeder extends Seeder
         foreach ($nama_formulir as $form) {
             $templateId = $templateIds[$form['template_name']] ?? null;
             if ($templateId) {
+                $slug = Str::of($form['nama'])->slug('-');
+                $tautan = "http://pkl-project.test:8080/detail/answer/" . $slug;
+
                 Form::create([
                     'nama' => $form['nama'],
+                    'slug' => $slug,
+                    'tautan' => $tautan,
                     'template_id' => $templateId,
                     'user_id' => rand(1, 4),
                     'tahun_ajaran' => now()->year,

@@ -4,7 +4,7 @@
 <div class="pt-3 pb-2 mb-3 border-bottom">
     <div class="fs-1 fw-bold text-center">Formulir Detail</div>
 </div>
-<a href="{{ route('templateDetail', ['kategori' => $template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+<a href="{{ route('templateDetail', ['kategori' => $template->kategori->slug]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
 
 <div class="mb-4">
     <div class="fs-4">Judul Formulir</div>
@@ -72,6 +72,14 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="mb-3">
+                    <label for="section" class="form-label">Section</label>
+                    <select class="form-select form-select-lg mb-3" name="questions[{{ $index }}][section]" disabled>
+                    @for ($i = 1; $i <= 10; $i++)
+                        <option value="{{ $i }}" {{ $question->section == $i ? 'selected' : '' }}>{{ $i }}</option>
+                    @endfor    
+                </select>
             </div>
         </div>
     @endforeach

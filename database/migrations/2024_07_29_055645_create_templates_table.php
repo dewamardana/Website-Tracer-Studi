@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('templates', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
+            $table->string('slug');
             $table->unsignedBigInteger('kategori_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();

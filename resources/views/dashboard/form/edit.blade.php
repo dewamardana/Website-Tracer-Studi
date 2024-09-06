@@ -15,11 +15,12 @@
 
 <a href="/dashboard/form" class="btn btn-success mt-2 mb-2">Kembali</a>
 <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Buat Formulir</h1>
+    <h1 class="h2">Edit Formulir</h1>
 </div>
 
-<form method="POST" action="/dashboard/form">
+<form method="POST" action="/dashboard/form{{ $form->slug }}">
     @csrf
+    @method('PUT')
     <div class="row">
         <div class="col col-lg-6">            
             <div class="mb-3">

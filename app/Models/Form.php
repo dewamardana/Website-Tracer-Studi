@@ -12,11 +12,6 @@ class Form extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
-    // public function kategori(): BelongsTo
-    // {
-    //     return $this->BelongsTo(Kategori::class);
-    // }
-    
         public function template(): BelongsTo
     {
         return $this->BelongsTo(Template::class);
@@ -37,4 +32,8 @@ class Form extends Model
         return $this->hasMany(Jawaban::class);
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }

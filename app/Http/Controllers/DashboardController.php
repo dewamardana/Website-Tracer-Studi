@@ -28,10 +28,9 @@ class DashboardController extends Controller
         ]); 
     }
 
-    public function TemplatePage($kategoriId)
+    public function TemplatePage(Kategori $kategori)
     {
         $user = Auth::user();
-        $kategori = Kategori::findOrFail($kategoriId);
         $template = Template::where('kategori_id',$kategori->id)->get();
 
         return view('dashboard.template.index', [

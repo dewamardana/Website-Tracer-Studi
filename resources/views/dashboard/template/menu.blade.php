@@ -49,7 +49,7 @@
               <td>{{ $k->nama }}</td>
               <td>{{ $k->deskripsi }}</td>
               <td>
-                <a href="/dashboard/menutemplate/{{ $k->id }}" class="badge bg-success"><span data-feather="eye"></span></a>
+                <a href="/dashboard/menutemplate/{{ $k->slug }}" class="badge bg-success"><span data-feather="eye"></span></a>
               </td>
             </tr>
             @endforeach

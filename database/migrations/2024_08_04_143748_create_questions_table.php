@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('type'); // Type of the question (text, radio, dropdown, etc.)
             $table->json('options')->nullable(); // Options for questions like radio, checkbox, dropdown
             $table->boolean('required')->default(false); // Whether the question is required or not
+            $table->integer('section')->default(1);
             $table->timestamps();
 
             // Foreign key constraint

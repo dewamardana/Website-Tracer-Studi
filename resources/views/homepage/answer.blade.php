@@ -9,7 +9,7 @@
 <div id="questions-container">
     <div class="row justify-content-center">
         <div class="col-md-8 text-end">
-            <a href="{{ route('showKategori', ['kategori' => $form->template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+            <a href="/detail/template/{{ $form->template->slug }}" class="btn btn-success mt-2 mb-2">Kembali</a>
         </div>
     </div>
     <div class="row justify-content-center">

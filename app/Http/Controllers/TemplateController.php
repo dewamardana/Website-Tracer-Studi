@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Form;
+use App\Models\Jawaban;
 use App\Models\Kategori;
 use App\Models\Template;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -44,11 +46,25 @@ class TemplateController extends Controller
             'questions' => 'required|array',
             'questions.*.question' => 'required|string',
             'questions.*.type' => 'required|string',
+            'questions.*.section' => 'required|numeric',
 
         ]);
 
+        // Generate the initial slug
+        $slug = Str::of($request->nama)->slug('-');
+        $originalSlug = $slug;
+
+        // Check if slug already exists and modify it if necessary
+        $counter = 1;
+        while (DB::table('templates')->where('slug', $slug)->exists()) {
+            // Add a counter to the slug if it already exists
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
         $form = Template::create([
             'nama' => $request->nama,
+            'slug' => $slug,
             'kategori_id' => $request->kategori_id,
             'user_id' => $user->id
         ]);
@@ -57,7 +73,8 @@ class TemplateController extends Controller
             $form->questions()->create($question);
         }
 
-        return redirect()->route('templateDetail', ['kategori' => $request->kategori_id])->with('success', 'Template Berhasil Dibuat.');
+        $back = Kategori::findOrFail($request->kategori_id);
+        return redirect()->route('templateDetail', ['kategori' => $back->slug])->with('success', 'Template Berhasil Dibuat.');
     }
 
     /**
@@ -111,6 +128,7 @@ class TemplateController extends Controller
         $form->update([
             'nama' => $request->nama,
             'kategori_id' => $request->kategori_id,
+            'slug' => Str::of($request->nama)->slug('-'),
         ]);
 
         // Hapus pertanyaan yang ada
@@ -120,7 +138,9 @@ class TemplateController extends Controller
         foreach ($request->questions as $question) {
             $form->questions()->create($question);
         }
-        return redirect()->route('templateDetail', ['kategori' => $request->kategori_id])->with('success', 'Template Berhasil Diperbarui.');
+
+        $back = Kategori::findOrFail($request->kategori_id);
+        return redirect()->route('templateDetail', ['kategori' => $back->slug])->with('success', 'Template Berhasil Diperbarui.');
     }
 
     /**
@@ -128,7 +148,6 @@ class TemplateController extends Controller
      */
     public function destroy(Template $template)
     {
-        $kategori = $template->kategori_id;
         DB::table('questions')->where('template_id', $template->id)->delete();
         DB::table('templates')->where('id', $template->id)->delete();
 
@@ -136,10 +155,10 @@ class TemplateController extends Controller
     }
 
 
-    public function checkAndRedirect($id)
+    public function checkAndRedirect(Template $template)
     {
         // Cek apakah tabel template sudah berisi data
-        $templateExists = Form::where('template_id', $id)->first();
+        $templateExists = Jawaban::where('template_id', $template->id)->first();
 
         if ($templateExists) {
                
@@ -147,10 +166,10 @@ class TemplateController extends Controller
                 'showModal' => true,
                 'modalTitle' => 'Template ini Sudah berisi data',
                 'modalMessage' => 'Tekan OK untuk Membuat Duplikasi Template',
-                'id' => $id,
+                'id' => $template->id,
             ]);
         } else {
-            return redirect()->action([TemplateController::class, 'edit'], ['template' => $id]);
+            return redirect()->action([TemplateController::class, 'edit'], ['template' => $template]);
         }
     }
 

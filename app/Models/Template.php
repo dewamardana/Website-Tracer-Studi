@@ -36,4 +36,9 @@ class Template extends Model
     {
         return $this->hasMany(Form::class);
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }

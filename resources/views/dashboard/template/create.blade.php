@@ -113,6 +113,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label for="section" class="form-label">Section</label>
+                        <select class="form-select form-select-lg mb-3 @error('section') is-invalid @enderror" aria-label="Large select example" id="section" name="questions[{{ $index }}][section]" required>
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}" {{ old('questions.'.$index.'.section') == $i ? 'selected' : '' }}>{{ $i }}</option> 
+                            @endfor    
+                        </select>
+                        @error('section')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
             @endforeach
         @endif
@@ -223,6 +234,17 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="section" class="form-label">Section</label>
+                        <select class="form-select form-select-lg mb-3 @error('section') is-invalid @enderror" aria-label="Large select example" id="section" name="questions[${index }][section]" required>
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option> 
+                            @endfor    
+                        </select>
+                        @error('section')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
             `;

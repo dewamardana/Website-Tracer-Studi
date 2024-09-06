@@ -27,8 +27,8 @@
               <td>{{ $k->nama }}</td>
               <td>{{ $k->deskripsi }}</td>
               <td>
-                <a href="/dashboard/kategori/{{ $k->id }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
-                <form action="/dashboard/kategori/{{ $k->id }}" class="d-inline" method="POST">
+                <a href="/dashboard/kategori/{{ $k->slug }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
+                <form action="/dashboard/kategori/{{ $k->slug }}" class="d-inline" method="POST">
                   @csrf
                   @method('DELETE')
                   <button class="badge bg-danger border-0" onclick="return confirm('Konfirmasi Menghapus Kategori')"><span data-feather="x-circle"></span></button>

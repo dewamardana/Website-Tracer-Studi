@@ -5,7 +5,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Buat Formulir</h1>
 </div>
-<a href="/" class="btn btn-success mt-2 mb-2">Kembali</a>
+<a href="/detail/{{ $kategori }}" class="btn btn-success mt-2 mb-2">Kembali</a>
 
     <div class="table-responsive">
         <table class="table table-sm">

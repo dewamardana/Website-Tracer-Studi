@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -38,10 +39,24 @@ class KategoriController extends Controller
     {
         $user = Auth::user();
         $validated = $request->validate([
-        'nama' => 'required|unique:templates|max:100',
+        'nama' => 'required|unique:kategoris|max:100',
         'deskripsi' => 'required',
     ]);
+    
+       // Generate the initial slug
+        $slug = Str::of($request->nama)->slug('-');
+        $originalSlug = $slug;
 
+        // Check if slug already exists and modify it if necessary
+        $counter = 1;
+        while (DB::table('kategoris')->where('slug', $slug)->exists()) {
+            // Add a counter to the slug if it already exists
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        // Assign the unique slug
+        $validated['slug'] = $slug;
         $validated['user_id'] = $user->id;
 
         DB::table('kategoris')->insert($validated);
@@ -79,12 +94,14 @@ class KategoriController extends Controller
     ]);
 
         $validated['user_id'] = $user->id;
+        $validated['slug'] = Str::of($request->nama)->slug('-');
+        
 
         $validasinama = Kategori::where('id', '!=', $kategori->id)//yang id-nya tidak sama dengan $id
                                 ->where('nama', $request->nama)
                                 ->first();
         if ($validasinama) {
-            return back()->with('error', 'Slug sudah ada, coba yang lain');
+            return back()->with('status', 'Nama sudah ada, coba yang lain');
         } else {
             DB::table('kategoris')->where('id', $kategori->id)->update($validated);
             return redirect('/dashboard/kategori')->with('status', 'Kategori Surat Berhasil Diedit'); 
@@ -99,4 +116,5 @@ class KategoriController extends Controller
         DB::table('kategoris')->where('id', $kategori->id)->delete();
         return redirect('/dashboard/kategori')->with('status', 'Kategori Surat Berhasil Dihapus');
     }
+
 }

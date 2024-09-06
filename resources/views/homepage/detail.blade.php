@@ -14,7 +14,7 @@
                             <img src="{{ asset('img/checklist.png') }}" class="card-img-top mt-2" alt="...">
                             <div class="card-body">
                                 <h5 class="card-title text-center fw-bold">{{ $t->nama }}</h5>
-                                <a href="/detail/template/{{ $t->id }}" class="btn btn-primary">Lihat Form</a>
+                                <a href="/detail/template/{{ $t->slug }}" class="btn btn-primary">Lihat Form</a>
                             </div>
                         </div>
                     </div>

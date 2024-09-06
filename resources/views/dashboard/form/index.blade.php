@@ -30,12 +30,12 @@
                 <td>{{ $f->template->nama }}</td>
                 <td>{{ $f->user->name }}</td>
                 <td>
-                    <a href="/dashboard/form/{{ $f->id }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
-                    <a href="/dashboard/form/{{ $f->id }}" class="badge bg-info"><span data-feather="eye"></span></a>
-                    <form action="/dashboard/form/{{ $f->id }}" class="d-inline" method="POST">
+                    <a href="/dashboard/form/{{ $f->slug }}/edit" class="badge bg-warning"><span data-feather="edit"></span></a>
+                    <a href="/dashboard/form/{{ $f->slug }}" class="badge bg-info"><span data-feather="eye"></span></a>
+                    <form action="/dashboard/form/{{ $f->slug }}" class="d-inline" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button class="badge bg-danger border-0" onclick="return confirm('Konfirmasi Menghapus Kategori')"><span data-feather="x-circle"></span></button>
+                    <button class="badge bg-danger border-0" onclick="return confirm('Konfirmasi Menghapus Formulir ?')"><span data-feather="x-circle"></span></button>
                     </form>
                     </td>
                 </tr>

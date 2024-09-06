@@ -53,8 +53,12 @@ class FormController extends Controller
             'close' => 'required|date',
         ]);
         $validated['user_id'] = $user->id;
+        $validated['tautan'] = "http://pkl-project.test:8080/detail/answer/{$request->nama}";
         DB::table('forms')->insert($validated);
         return redirect('/dashboard/form')->with('status', 'Formulir Berhasil Dibuat');
+
+
+        
     }
 
     /**
@@ -110,6 +114,7 @@ class FormController extends Controller
     $form->update([
         'nama' => $request->form_title_main,
         'kategori_id' => $request->kategori_id,
+        'tautan' => "http://pkl-project.test:8080/detail/answer/{$request->nama}",
     ]);
 
     // Hapus pertanyaan yang ada
@@ -129,28 +134,8 @@ class FormController extends Controller
      */
     public function destroy(Form $form)
     {
-        $kategori = $form->kategori_id;
-        DB::table('questions')->where('form_id', $form->id)->delete();
         DB::table('forms')->where('id', $form->id)->delete();
-
-        return redirect()->route('formDetail', ['kategori' => $kategori])->with('success', 'Template Berhasil Dihapus.');
+       return redirect('/dashboard/form')->with('status', 'Formilir Berhasil Dihapus');
     }
 
-    public function checkAndRedirect($id)
-    {
-        // Cek apakah template dengan id tertentu sudah ada
-        $template = Template::find($id);
-
-        if ($template) {
-            // // Jika template sudah ada, berikan peringatan dan buat duplikat
-            // $newTemplate = $template->replicate(); // Menggandakan template
-            // $newTemplate->save(); // Menyimpan duplikat dengan id baru
-            
-            // Redirect ke halaman edit template baru dengan pesan peringatan
-            return redirect()->with('warning', 'Template sudah ada.');
-        } else {
-            // Jika template belum ada, arahkan ke halaman edit
-            return redirect()->route('editTemplate', ['id' => $id]);
-        }
-    }
 }

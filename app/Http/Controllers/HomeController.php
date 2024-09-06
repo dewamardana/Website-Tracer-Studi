@@ -18,23 +18,26 @@ class HomeController extends Controller
         ]);
     }
 
-    public function show($KategoriId)
+    public function show(Kategori $kategori)
     {   
-        $template = Template::where('kategori_id', $KategoriId)->get();
-        $title = Kategori::where('id', $KategoriId)->first();
+        $template = Template::where('kategori_id', $kategori->id)->get();
+        $data = Kategori::where('id', $kategori->id)->first();
         return view('homepage.detail',[
             'template' => $template,
-            'title' =>$title->nama
+            'title' => $data->nama,
+            
+            
         ]);
     }
 
-    public function form($templateId)
+    public function form(Template $template)
     {   
-        $form = Form::where('template_id', $templateId)->get();
-        $title = Template::where('id', $templateId)->first();
+        $form = Form::where('template_id', $template->id)->get();
+        $data = Template::where('id', $template->id)->first();
         return view('homepage.form',[
             'form' => $form,
-            'title' =>$title->nama
+            'title' =>$data->nama,
+            'kategori' => $data->kategori->slug
         ]);
     }
 

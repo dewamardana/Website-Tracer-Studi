@@ -17,7 +17,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Salin Template</h1>
 </div>
-<a href="{{ route('templateDetail', ['kategori' => $template->kategori_id]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+<a href="{{ route('templateDetail', ['kategori' => $template->kategori->slug]) }}" class="btn btn-success mt-2 mb-2">Kembali</a>
 
 <form method="POST" action="/dashboard/menutemplate/template">
     @csrf
@@ -110,6 +110,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="mb-3">
+                        <label for="section" class="form-label">Section</label>
+                        <select class="form-select form-select-lg mb-3 @error('section') is-invalid @enderror" aria-label="Large select example" id="section" name="questions[{{ $index }}][section]" required>
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}" {{ old('questions.'.$index.'.section', $question['section'] ?? '') == $i ? 'selected' : '' }}>{{ $i }}</option>
+                            @endfor    
+                        </select>
+                        @error('section')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
                 </div>
             </div>
         @endforeach
@@ -209,6 +220,17 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="section" class="form-label">Section</label>
+                        <select class="form-select form-select-lg mb-3 @error('section') is-invalid @enderror" aria-label="Large select example" id="section" name="questions[${index }][section]" required>
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option> 
+                            @endfor    
+                        </select>
+                        @error('section')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>`;
         }
