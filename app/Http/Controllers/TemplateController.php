@@ -92,6 +92,11 @@ class TemplateController extends Controller
      */
     public function edit(Template $template)
     {
+        $user = Auth::user();
+        // Pastikan hanya user yang membuat form yang dapat memperbarui
+        if ($template->user_id !== $user->id) {
+            return back()->with('warning', 'Tidak Bisa Mengubah Template Pengguna Lain');
+        }
         $kategori = Kategori::all();
         return view('dashboard.template.edit',[
             'title' => 'edit',
@@ -105,7 +110,6 @@ class TemplateController extends Controller
      */
     public function update(Request $request, Template $template)
     {
-        $user = Auth::user();
     
         // Validasi input
         $request->validate([
@@ -119,17 +123,18 @@ class TemplateController extends Controller
         // Temukan form yang akan diperbarui
         $form = Template::findOrFail($template->id);
 
-        // Pastikan hanya user yang membuat form yang dapat memperbarui
-        if ($form->user_id !== $user->id) {
-            return redirect()->back()->with('error', 'You do not have permission to edit this form.');
+        $validasi = Template::where('id', '!=', $template->id)//yang id-nya tidak sama dengan $id
+                                ->where('nama', $request->nama)
+                                ->first();
+        if ($validasi) {
+            return back()->with('warning', 'Nama Template sudah ada, coba yang lain');
+        } else {
+            $form->update([
+                'nama' => $request->nama,
+                'kategori_id' => $request->kategori_id,
+                'slug' => Str::of($request->nama)->slug('-'),
+            ]);
         }
-
-        // Perbarui informasi form
-        $form->update([
-            'nama' => $request->nama,
-            'kategori_id' => $request->kategori_id,
-            'slug' => Str::of($request->nama)->slug('-'),
-        ]);
 
         // Hapus pertanyaan yang ada
         $form->questions()->delete();
@@ -148,10 +153,30 @@ class TemplateController extends Controller
      */
     public function destroy(Template $template)
     {
-        DB::table('questions')->where('template_id', $template->id)->delete();
-        DB::table('templates')->where('id', $template->id)->delete();
+        $user = Auth::user();
+        if ($template->user_id !== $user->id) {
+            return back()->with('warning', 'Tidak Bisa Menghapus Template Pengguna Lain');
+        }
 
-        return redirect()->back()->with('success', 'Template Berhasil Dihapus.');
+        try {
+            // Hapus semua pertanyaan yang terkait dengan template
+            DB::table('questions')->where('template_id', $template->id)->delete();
+            // Hapus template
+            DB::table('templates')->where('id', $template->id)->delete();
+            
+            
+            // Jika berhasil, redirect dengan pesan sukses
+            return redirect()->back()->with('success', 'Template berhasil dihapus.');
+        } catch (\Exception $e) {
+             return redirect()->back()->with('warning', 'Template Gagal dihapus karena sudah berisi data');
+        }
+
+
+
+
+        
+
+       
     }
 
 
@@ -197,9 +222,8 @@ class TemplateController extends Controller
             ]);
     }
 
-    public function copyTemplate($id)
+    public function copyTemplate(Template $template)
     {
-        $template = Template::findOrFail($id);
         $kategori = Kategori::all();
         
         return view('dashboard.template.copyTemplate',[

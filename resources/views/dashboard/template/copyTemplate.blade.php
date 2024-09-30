@@ -1,19 +1,6 @@
 @extends('dashboard.Layout.main')
 
 @section('main')
-@if ($errors->any())
-    <div style="color: red;">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <div class="alert alert-primary" role="alert">
-                    <li>{{ $error }}</li>
-                </div>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Salin Template</h1>
 </div>

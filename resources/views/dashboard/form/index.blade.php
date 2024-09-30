@@ -1,11 +1,16 @@
 @extends('dashboard.Layout.main')
 
 @section('main')
-  @if (session('status'))
-  <div class="alert alert-success mt-1" role="alert">
-    {{ session('status') }}
-  </div>
-  @endif
+    @if (session('success'))
+        <div class="alert alert-success mt-1" role="alert">
+            {{ session('success') }}
+        </div>
+    @elseif (session('warning'))
+        <div class="alert alert-warning mt-1" role="alert">
+            {{ session('warning') }}
+        </div>
+    @endif
+
   <a href="/dashboard/form/create" class="btn btn-primary mt-2 mb-2">Buat Formulir</a>
                 
      <div class="section-title text-center">

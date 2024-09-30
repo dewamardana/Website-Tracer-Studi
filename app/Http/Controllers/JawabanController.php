@@ -6,9 +6,11 @@ use App\Models\answerDetail;
 use App\Models\Form;
 use App\Models\Jawaban;
 use App\Models\Questions;
+use App\Models\SectionDump;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Question\Question;
 
 class JawabanController extends Controller
 {
@@ -33,20 +35,27 @@ class JawabanController extends Controller
      */
     public function store(Request $request)
     {
-        
         $user = Auth::user();
         $form = Form::findOrFail($request->form_id);
-
-
-        $jawaban = Jawaban::create([
-            'template_id' => $request->template_id,
-            'user_id' => $user->id,
-            'form_id' => $request->form_id,
-        ]);
         
+        $jawaban = Jawaban::where('form_id', $request->form_id)
+                        ->where('template_id', $request->template_id)
+                        ->where('user_id', $user->id)->first();
+        // Cek apakah section pertama, buat 'jawaban' baru jika iya
+        if (!$jawaban) {
+            $max = DB::table('questions')->where('template_id', $request->template_id)->max('section');
+            $jawaban = Jawaban::create([
+                'template_id' => $request->template_id,
+                'user_id' => $user->id,
+                'form_id' => $request->form_id, 
+                'nowSection' => $request->section,
+                'maxSection' => $max,
+            ]);
+        }
+            
+            // Simpan jawaban detail
         foreach ($request->input('answers') as $questionId => $answer) {
             if (is_array($answer)) {
-                // Handle multiple answers (e.g., checkboxes)
                 foreach ($answer as $value) {
                     answerDetail::create([
                         'jawaban_id' => $jawaban->id,
@@ -55,32 +64,37 @@ class JawabanController extends Controller
                     ]);
                 }
             } else {
-                // Handle single answer
                 answerDetail::create([
-                    'jawaban_id' => $jawaban->id,            
+                    'jawaban_id' => $jawaban->id,
                     'question_id' => $questionId,
                     'answer' => $answer,
                 ]);
             }
         }
 
-        return redirect()->route('showKategori', ['kategori' => $form->template->kategori_id]);
+        if($jawaban->nowSection == $jawaban->maxSection){
+            $jawaban->nowSection += 1;
+            $jawaban->save();
+            return redirect()->route('showForm', ['template' => $form->template->slug])->with('success', 'Formulir sudah Diisi');
+        }else{
+            // Update 'nowSection' untuk section berikutnya
+            $jawaban->nowSection += 1;
+            $jawaban->save();
+            // Redirect ke pertanyaan berikutnya
+            return redirect()->action(
+                [JawabanController::class, 'showQuestion'], ['form' => $form->slug]
+            );
+        }
+           
     }
-
+       
+    
+        
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Form $form)
     {
-        // $form = Form::with('questions')->findOrFail($jawaban->id);;
-        $form = Form::findOrFail($id);
-        $questions = Questions::where('template_id', $id)->get();
-
-        return view('homepage.answer', [
-            'title' => $form->nama,
-            'form' => $form,
-            'questions' => $questions,
-        ]);
     }
 
     /**
@@ -106,4 +120,45 @@ class JawabanController extends Controller
     {
         //
     }
+
+
+    public function showQuestion(Form $form)
+    {
+        $user = Auth::user();
+        // Cek dan update nilai section saat ini dan max section
+
+        $jawaban = Jawaban::where('form_id', $form->id)
+                            ->where('template_id', $form->template_id)
+                            ->where('user_id', $user->id)->first();
+
+        // Jika section pertama kali, inisialisasi section dan maxSection
+
+        $btnMessage = '';
+        $section = 0;
+
+        if(!$jawaban) {
+            $section = 1;
+            $btnMessage = 'Next';
+        }else if($jawaban->nowSection > $jawaban->maxSection){
+            return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Anda Sudah Mengisi Form ini');
+        }else{
+            $section = $jawaban->nowSection;
+            $btnMessage = $section == $jawaban->maxSection ? 'Finish' : 'Next';
+
+        }
+        // Ambil pertanyaan untuk section saat ini
+        $questions = Questions::where('template_id', $form->template_id)
+                            ->where('section', $section)
+                            ->get();
+
+        return view('homepage.answer', [
+            'title' => $form->nama,
+            'form' => $form,
+            'questions' => $questions,
+            'btnMessage' => $btnMessage,
+            'section' => $section,
+        ]);
+    }
+
+    
 }

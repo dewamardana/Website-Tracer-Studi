@@ -32,7 +32,7 @@
             <tr class="{{ Auth::user()->id == $t->user_id ? 'table-success' : '' }}">
               <td>{{ $index+1 }}</td>
               <td>{{ $t->nama }}</td>
-              <td><a href="/dashboard/menutemplate/template/copy/{{ $t->id }}" class="badge bg-primary"><span data-feather="edit"></span></a></td>
+              <td><a href="/dashboard/menutemplate/template/copy/{{ $t->slug }}" class="badge bg-primary"><span data-feather="edit"></span></a></td>
             </tr>
             @endforeach
           </tbody>

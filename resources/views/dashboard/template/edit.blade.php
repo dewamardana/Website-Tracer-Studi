@@ -5,12 +5,17 @@
     <div style="color: red;">
         <ul>
             @foreach ($errors->all() as $error)
-                <div class="alert alert-warning" role="alert">
+                <div class="alert alert-danger" role="alert">
                     <li>{{ $error }}</li>
                 </div>
             @endforeach
         </ul>
     </div>
+@endif
+@if (session('warning'))
+    <div class="alert alert-warning mt-1" role="alert">
+		{{ session('warning') }}
+  	</div>
 @endif
 
 
@@ -23,8 +28,8 @@
     @csrf
     @method('PUT')
     <div class="mb-3">
-        <label for="form-title-input" class="form-label fs-2 fw-bold">Judul Form</label>
-        <input type="text" class="form-control @error('nama') is-invalid @enderror" id="form-title-input" name="nama"
+        <label for="nama" class="form-label fs-2 fw-bold">Judul Form</label>
+        <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama"
         value="{{ old('nama', $template->nama) }}" required>
         @error('nama')
             <div class="alert alert-danger">{{ $message }}</div>
@@ -114,14 +119,11 @@
                 </div>
                 <div class="mb-3">
                         <label for="section" class="form-label">Section</label>
-                        <select class="form-select form-select-lg mb-3 @error('section') is-invalid @enderror" aria-label="Large select example" id="section" name="questions[{{ $index }}][section]" required>
+                        <select class="form-select form-select-lg mb-3" aria-label="Large select example" id="section" name="questions[{{ $index }}][section]" required>
                             @for ($i = 1; $i <= 10; $i++)
                                 <option value="{{ $i }}" {{ old('questions.'.$index.'.section', $question['section'] ?? '') == $i ? 'selected' : '' }}>{{ $i }}</option>
                             @endfor    
                         </select>
-                        @error('section')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
                 </div>
             </div>
         @endforeach

@@ -1,3 +1,4 @@
+
 @extends('dashboard.Layout.main')
 
 @section('main')
@@ -112,6 +113,21 @@
                             <div class="alert alert-danger">{{ $message }}</div>
                         @enderror
                     </div>
+                    {{-- Bagian dalam form HTML --}}
+                    <div class="mb-3">
+                        <label for="syarat" class="form-label">Syarat Pertanyaan</label>
+                        <select class="form-select form-select-lg mb-3" name="questions[{{ $index }}][condition_question]" id="syarat">
+                            <option value="" disabled selected>Pilih Pertanyaan Syarat</option>
+                            @foreach (old('questions', []) as $i => $question)
+                                @if($i !== $index)
+                                    <option value="{{ $i }}" {{ old('questions.'.$index.'.condition_question') == $i ? 'selected' : '' }}>
+                                        {{ $question['question'] }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+
                 </div>
             @endforeach
         @endif
@@ -121,6 +137,7 @@
 </form>
 
 <script>
+    var oldQuestions = @json(old('questions', []));
     document.addEventListener('DOMContentLoaded', function () {
         let questionIndex = {{ old('questions') ? count(old('questions')) : 0 }};
         
@@ -158,6 +175,8 @@
         }
 
         function createQuestionTemplate(index) {
+            const questionContent = oldQuestions[index] ? oldQuestions[index].question : '';
+            const questionType = oldQuestions[index] ? oldQuestions[index].type : 'text'
             return `
                 <div class="question-item mb-4" data-index="${index}">
                     <div class="mb-3">
@@ -222,6 +241,19 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="syarat" class="form-label">Syarat Pertanyaan</label>
+                        <select class="form-select form-select-lg mb-3" name="questions[${index}][condition_question]" id="syarat">
+                            <option value="" disabled selected>Pilih Pertanyaan Syarat</option>
+                            @foreach (old('questions', []) as $i => $question)
+                                @if($i !== $index)
+                                    <option value="{{ $i }}" {{ old('questions.'.$index.'.condition_question') == $i ? 'selected' : '' }}>
+                                        {{ $question['question'] }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
                     </div>
                 </div>
             `;
@@ -289,6 +321,4 @@
 </script>
 
 @endsection
-
-
 

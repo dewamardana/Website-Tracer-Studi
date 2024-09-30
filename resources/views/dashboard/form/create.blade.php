@@ -1,18 +1,6 @@
 @extends('dashboard.Layout.main')
 
 @section('main')
-@if ($errors->any())
-    <div style="color: red;">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <div class="alert alert-primary" role="alert">
-                    <li>{{ $error }}</li>
-                </div>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
 <a href="/dashboard/form" class="btn btn-success mt-2 mb-2">Kembali</a>
 <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Buat Formulir</h1>
@@ -79,12 +67,6 @@
     </div>
     <button type="submit" class="btn btn-primary">Buat</button>
 </form>
-<script>
-    document.getElementById('tautan').addEventListener('input', function() {
-        var namaFormulir = this.value.trim();
-        var linkAkses = 'http://pkl-project.test:8080/detail/answer/' + encodeURIComponent(namaFormulir);
-        document.getElementById('tautan').value = linkAkses;
-    });
-</script>
+
 @endsection
 

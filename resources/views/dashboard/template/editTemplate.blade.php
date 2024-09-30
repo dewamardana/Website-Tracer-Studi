@@ -12,6 +12,11 @@
         </ul>
     </div>
 @endif
+@if (session('warning'))
+    <div class="alert alert-warning mt-1" role="alert">
+		{{ session('warning') }}
+  	</div>
+@endif
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Edit Template</h1>

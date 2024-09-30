@@ -9,7 +9,7 @@
 <div id="questions-container">
     <div class="row justify-content-center">
         <div class="col-md-8 text-end">
-            <a href="/detail/template/{{ $form->template->slug }}" class="btn btn-success mt-2 mb-2">Kembali</a>
+            {{-- <a href="/detail/template/{{ $form->template->slug }}" class="btn btn-success mt-2 mb-2">Kembali</a> --}}
         </div>
     </div>
     <div class="row justify-content-center">
@@ -44,12 +44,15 @@
                             @endforeach
                         @elseif ($question->type == 'textarea')
                             <textarea name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}></textarea>
+                        @elseif ($question->type == 'date')
+                             <input type="date" name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
                         @endif
                     </div>
                 @endforeach
                 <input type="hidden" value="{{ $form->id }}" name="form_id">
                 <input type="hidden" value="{{ $form->template_id }}" name="template_id">
-                <button type="submit" class="btn btn-primary">Kirim</button>
+                <input type="hidden" value="{{ $section }}" name="section">
+                <button type="submit" class="btn btn-primary">{{ $btnMessage }}</button>
             </form>
         </div>
     </div>

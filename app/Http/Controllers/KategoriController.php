@@ -60,7 +60,7 @@ class KategoriController extends Controller
         $validated['user_id'] = $user->id;
 
         DB::table('kategoris')->insert($validated);
-        return redirect('/dashboard/kategori')->with('status', 'Kategori Surat Berhasil Dibuat');
+        return redirect('/dashboard/kategori')->with('success', 'Kategori Surat Berhasil Dibuat');
     }
 
     /**
@@ -81,7 +81,7 @@ class KategoriController extends Controller
             'kategori' => $kategori
         ]);
     }
-
+ 
     /**
      * Update the specified resource in storage.
      */
@@ -101,20 +101,28 @@ class KategoriController extends Controller
                                 ->where('nama', $request->nama)
                                 ->first();
         if ($validasinama) {
-            return back()->with('status', 'Nama sudah ada, coba yang lain');
+            return back()->with('warning', 'Kategori sudah ada, coba yang lain');
         } else {
             DB::table('kategoris')->where('id', $kategori->id)->update($validated);
-            return redirect('/dashboard/kategori')->with('status', 'Kategori Surat Berhasil Diedit'); 
+            return redirect('/dashboard/kategori')->with('success', 'Kategori Surat Berhasil Diedit'); 
         }
-    }
+    } 
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Kategori $kategori)
     {
-        DB::table('kategoris')->where('id', $kategori->id)->delete();
-        return redirect('/dashboard/kategori')->with('status', 'Kategori Surat Berhasil Dihapus');
+
+        try {
+            // Hapus kategori
+            DB::table('kategoris')->where('id', $kategori->id)->delete();
+            // Jika berhasil, redirect dengan pesan sukses
+            return redirect('/dashboard/kategori')->with('success', 'Kategori Surat Berhasil Dihapus');
+        } catch (\Exception $e) {
+            // Jika gagal, redirect dengan pesan error
+            return redirect('/dashboard/kategori')->with('warning', 'Kategori Surat Gagal Dihapus karena sudah berisi Data');
+        }
     }
 
 }
