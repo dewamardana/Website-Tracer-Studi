@@ -50,8 +50,8 @@ class TemplateController extends Controller
             'questions.*.section' => 'required|numeric',
             'questions.*.options' => 'nullable|array',
             'questions.*.required' => 'boolean',
-            'questions.*.question_requirment' => 'nullable|string',
-            'questions.*.question_requirment_value' => 'nullable|string',
+            'questions.*.question-requirment' => 'nullable|string',
+            'questions.*.question-requirment-value' => 'nullable|string',
         ]);
 
         // Generate the initial slug
@@ -147,7 +147,6 @@ class TemplateController extends Controller
      */
     public function update(Request $request, Template $template)
     {
-        // @dd($request);
         // Validasi input
         $request->validate([
             'kategori_id' => 'required|numeric',
@@ -155,35 +154,71 @@ class TemplateController extends Controller
             'questions' => 'required|array',
             'questions.*.question' => 'required|string',
             'questions.*.type' => 'required|string',
+            'questions.*.section' => 'required|numeric',
+            'questions.*.options' => 'nullable|array',
+            'questions.*.required' => 'boolean',
+            'questions.*.question-requirment' => 'nullable|string',
+            'questions.*.question-requirment-value' => 'nullable|string',
         ]);
 
-        // Temukan form yang akan diperbarui
-        $form = Template::findOrFail($template->id);
+        // Validasi nama template
+        $existingTemplate = Template::where('id', '!=', $template->id)
+            ->where('nama', $request->nama)
+            ->first();
 
-        $validasi = Template::where('id', '!=', $template->id)//yang id-nya tidak sama dengan $id
-                                ->where('nama', $request->nama)
-                                ->first();
-        if ($validasi) {
+        if ($existingTemplate) {
             return back()->with('warning', 'Nama Template sudah ada, coba yang lain');
-        } else {
-            $form->update([
-                'nama' => $request->nama,
-                'kategori_id' => $request->kategori_id,
-                'slug' => Str::of($request->nama)->slug('-'),
+        }
+
+        // Perbarui data template
+        $template->update([
+            'nama' => $request->nama,
+            'kategori_id' => $request->kategori_id,
+            'slug' => Str::of($request->nama)->slug('-'),
+        ]);
+
+        // Hapus semua pertanyaan lama
+        $template->questions()->delete();
+
+        // Simpan pertanyaan baru tanpa `question_requirment`
+        $questionIDs = [];
+        foreach ($request->questions as $questionData) {
+            $question_requirment_text = $questionData['question-requirment'] ?? null;
+            $question = $template->questions()->create([
+                'question' => $questionData['question'],
+                'type' => $questionData['type'],
+                'options' => $questionData['options'] ?? [],
+                'required' => $questionData['required'] ?? false,
+                'section' => $questionData['section'],
+                'question_requirment_text' => $question_requirment_text,
             ]);
+
+            // Simpan ID pertanyaan
+            $questionIDs[$questionData['question']] = $question->id;
         }
 
-        // Hapus pertanyaan yang ada
-        $form->questions()->delete();
+        // Update pertanyaan dengan `question_requirment`
+        foreach ($request->questions as $questionData) {
+            if (!empty($questionData['question-requirment']) && isset($questionIDs[$questionData['question-requirment']])) {
+                // Ambil ID pertanyaan yang dijadikan syarat       
+                $requirementQuestionId = $questionIDs[$questionData['question-requirment']];
 
-        // Tambahkan pertanyaan baru
-        foreach ($request->questions as $question) {
-            $form->questions()->create($question);
+                // Update pertanyaan dengan requirement
+                $template->questions()
+                    ->where('id', $questionIDs[$questionData['question']])
+                    ->update([
+                        'question_requirment' => $requirementQuestionId,
+                        'question_requirment_value' => $questionData['question-requirment-value'],
+                    ]);
+            }
         }
 
+        // Redirect atau kembalikan ke halaman yang diinginkan
         $back = Kategori::findOrFail($request->kategori_id);
-        return redirect()->route('templateDetail', ['kategori' => $back->slug])->with('success', 'Template Berhasil Diperbarui.');
+        return redirect()->route('templateDetail', ['kategori' => $back->slug])
+            ->with('success', 'Template Berhasil Diperbarui.');
     }
+
 
     /**
      * Remove the specified resource from storage.

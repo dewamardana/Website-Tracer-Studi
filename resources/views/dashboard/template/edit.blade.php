@@ -165,7 +165,7 @@
         @endif
     </div>
     <button type="button" class="btn btn-secondary mt-2 mb-5" id="add-question">Add Question</button>
-    <button type="submit" class="btn btn-primary mt-2 mb-5">Create</button>
+    <button type="submit" class="btn btn-warning mt-2 mb-5">edit</button>
 </form>
 
 <script>
@@ -211,23 +211,6 @@
             console.log("oldQuestions");
             console.log(oldQuestions);
         }
-
-
-        // formData['questions'] = questionsFromDb.map((questionData, index) => {
-        //     return {
-        //         question: questionData.question,
-        //         type: questionData.type,
-        //         required: questionData.required,
-        //         options: questionData.options || [],
-        //         questionRequirement: questionData.questionRequirement || 'None',
-        //         questionRequirementValue: questionData.questionRequirementValue || ''
-        //         };
-        // });
-
-
-        // // Memperbarui form dengan data dari formData
-        // updateFormFromData(formData['questions']);
-
         
 
         console.log(formData);
@@ -792,7 +775,7 @@
             // Isi dropdown "question-requirment" untuk setiap pertanyaan
             questionsList.forEach((item, index) => {
                 const requirementSelect = item.querySelector('select[name^="questions"][name$="[question-requirment]"]');
-                let optionsHTML = '<option value="None" selected disabled>Pilih Syarat</option>';
+                let optionsHTML = '<option value="None" selected >None</option>';
 
                 Object.keys(questionIndexMap).forEach((questionText, idx) => {
                     if (idx !== index) { // Hindari memilih diri sendiri

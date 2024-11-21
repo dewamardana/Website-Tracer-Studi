@@ -14,7 +14,7 @@
       <nav class="navbar navbar-expand-lg" style="background-color: #072AC8;">
         <div class="container-fluid">
           <a class="navbar-brand" href="#" >
-            <img src="{{ asset('img/Logo-unud-baru.png') }}" alt="logo Unud" width="80" height="80">
+            <img src="{{ asset('img/Logo-unud-baru.png') }}" alt="logo Unud" width="50" height="50">
           </a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span data-feather="home"></span>
@@ -45,7 +45,7 @@
               @if(Auth::check())
                 <form action="{{ route('logout') }}" method="POST" style="display:inline;"> 
                     @csrf
-                      <button type="button" class="btn btn-primary mx-2">Logout</button>
+                      <button class="btn btn-primary mx-2">Logout</button>
                 </form>
               @else
                 <li class="nav-item ">

@@ -8,6 +8,7 @@ use App\Models\Questions;
 use App\Models\SectionDump;
 use App\Models\answerDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Query\Builder;
@@ -144,83 +145,91 @@ class JawabanController extends Controller
     public function showQuestion(Form $form)
     {
         $user = Auth::user();
-        // Cek dan update nilai section saat ini dan max section
+        if (Carbon::now()->lt($form->open)) {
+            // Tanggal sekarang lebih kecil dari tanggal open, artinya form belum dibuka
+            return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Form belum dibuka.');
+        } elseif (Carbon::now()->gt($form->close)) {
+            // Tanggal sekarang lebih besar dari tanggal close, artinya form sudah ditutup
+            return redirect()->route('showForm', ['template' => $form->template->slug])->with('error', 'Form sudah ditutup.');
+        } else {
 
-        $jawaban = Jawaban::where('form_id', $form->id)
-                            ->where('template_id', $form->template_id)
-                            ->where('user_id', $user->id)->first();
+            // Cek dan update nilai section saat ini dan max section
 
-        // Jika section pertama kali, inisialisasi section dan maxSection
+            $jawaban = Jawaban::where('form_id', $form->id)
+                                ->where('template_id', $form->template_id)
+                                ->where('user_id', $user->id)->first();
 
-        $btnMessage = '';
-        $section = 0;
+            // Jika section pertama kali, inisialisasi section dan maxSection
 
-        if(!$jawaban) {
-            $section = 1;
-            $btnMessage = 'Next';
-            $questions = Questions::where('template_id', $form->template_id)
-                                ->where('section', $section)
-                                ->whereNull('question_requirment')
-                                ->get();
-        }else if($jawaban->nowSection > $jawaban->maxSection){
-            return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Anda Sudah Mengisi Form ini');
-        }else{
-            $section = $jawaban->nowSection;
-            $btnMessage = $section == $jawaban->maxSection ? 'Finish' : 'Next';
-            // Ambil answer_detail untuk jawaban yang sudah ada
-            $answer_details = AnswerDetail::where('jawaban_id', $jawaban->id)->get();
+            $btnMessage = '';
+            $section = 0;
 
-            // Ambil pertanyaan dengan memperhatikan question_requirment
-            $questions = Questions::where('template_id', $form->template_id)
-                              ->where('section', $section)
-                              ->where(function ($query) use ($answer_details) {
-                                  // Tampilkan pertanyaan yang tidak ada requirement-nya
-                                  $query->whereNull('question_requirment');
-
-                                  // Tampilkan pertanyaan yang memenuhi syarat question_requirment
-                                  foreach ($answer_details as $answer_detail) {
-                                      $query->orWhere(function ($subQuery) use ($answer_detail) {
-                                          $subQuery->where('question_requirment', $answer_detail->question_id)
-                                                   ->where('question_requirment_value', $answer_detail->answer);
-                                      });
-                                  }
-                              })->whereNotIn('id', $answer_details->pluck('question_id'))->get(); // Menambahkan kondisi untuk hanya mengambil pertanyaan yang belum terjawab
-
-        }
-
-        if($questions->isEmpty()){
-            $max = DB::table('questions')->where('template_id', $form->template_id)->max('section');
-            if(!$jawaban){
-                while($questions->isEmpty() && $section <= $max){
-                    $questions = Questions::where('template_id', $form->template_id)
-                                ->where('section', $section)
-                                ->whereNull('question_requirment')
-                                ->get();
-                    if($questions->isEmpty()){
-                        $section += 1;
-                    }
-                }
+            if(!$jawaban) {
+                $section = 1;
+                $btnMessage = 'Next';
+                $questions = Questions::where('template_id', $form->template_id)
+                                    ->where('section', $section)
+                                    ->whereNull('question_requirment')
+                                    ->get();
+            }else if($jawaban->nowSection > $jawaban->maxSection){
+                return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Anda Sudah Mengisi Form ini');
             }else{
-                $jawaban->nowSection += 1;
-                $jawaban->save();
-                    return redirect()->action(
-                        [JawabanController::class, 'showQuestion'], ['form' => $form->slug]
-                    );
+                $section = $jawaban->nowSection;
+                $btnMessage = $section == $jawaban->maxSection ? 'Finish' : 'Next';
+                // Ambil answer_detail untuk jawaban yang sudah ada
+                $answer_details = AnswerDetail::where('jawaban_id', $jawaban->id)->get();
+
+                // Ambil pertanyaan dengan memperhatikan question_requirment
+                $questions = Questions::where('template_id', $form->template_id)
+                                ->where('section', $section)
+                                ->where(function ($query) use ($answer_details) {
+                                    // Tampilkan pertanyaan yang tidak ada requirement-nya
+                                    $query->whereNull('question_requirment');
+
+                                    // Tampilkan pertanyaan yang memenuhi syarat question_requirment
+                                    foreach ($answer_details as $answer_detail) {
+                                        $query->orWhere(function ($subQuery) use ($answer_detail) {
+                                            $subQuery->where('question_requirment', $answer_detail->question_id)
+                                                    ->where('question_requirment_value', $answer_detail->answer);
+                                        });
+                                    }
+                                })->whereNotIn('id', $answer_details->pluck('question_id'))->get(); // Menambahkan kondisi untuk hanya mengambil pertanyaan yang belum terjawab
             }
 
-            if($section > $max){
-                return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Form ini Kosong, hubungi pemilik formulir');
-            } 
-            $section = 1;
+            if($questions->isEmpty()){
+                $max = DB::table('questions')->where('template_id', $form->template_id)->max('section');
+                if(!$jawaban){
+                    while($questions->isEmpty() && $section <= $max){
+                        $questions = Questions::where('template_id', $form->template_id)
+                                    ->where('section', $section)
+                                    ->whereNull('question_requirment')
+                                    ->get();
+                        if($questions->isEmpty()){
+                            $section += 1;
+                        }
+                    }
+                }else{
+                    $jawaban->nowSection += 1;
+                    $jawaban->save();
+                        return redirect()->action(
+                            [JawabanController::class, 'showQuestion'], ['form' => $form->slug]
+                        );
+                }
 
+                if($section > $max){
+                    return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Form ini Kosong, hubungi pemilik formulir');
+                } 
+                $section = 1;
+
+            }
+            return view('homepage.answer', [
+                'title' => $form->nama,
+                'form' => $form,
+                'questions' => $questions,
+                'btnMessage' => $btnMessage,
+                'section' => $section,
+            ]);
         }
-        return view('homepage.answer', [
-            'title' => $form->nama,
-            'form' => $form,
-            'questions' => $questions,
-            'btnMessage' => $btnMessage,
-            'section' => $section,
-        ]);
     }
 
     
