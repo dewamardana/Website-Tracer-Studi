@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\answerDetail;
 use App\Models\Form;
 use App\Models\Jawaban;
 use App\Models\Questions;
 use App\Models\SectionDump;
+use App\Models\answerDetail;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\Console\Question\Question;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Query\Builder;
 
 class JawabanController extends Controller
 {
@@ -71,21 +71,41 @@ class JawabanController extends Controller
                 ]);
             }
         }
+        // Ambil answer_detail untuk jawaban yang sudah ada
+        $answer_details = AnswerDetail::where('jawaban_id', $jawaban->id)->get();
+        $cekQuestion = Questions::where('template_id', $form->template_id)
+                              ->where('section', $jawaban->nowSection)
+                              ->where(function ($query) use ($answer_details) {
+                                  // Tampilkan pertanyaan yang tidak ada requirement-nya
+                                  $query->whereNull('question_requirment');
 
-        if($jawaban->nowSection == $jawaban->maxSection){
-            $jawaban->nowSection += 1;
-            $jawaban->save();
-            return redirect()->route('showForm', ['template' => $form->template->slug])->with('success', 'Formulir sudah Diisi');
+                                  // Tampilkan pertanyaan yang memenuhi syarat question_requirment
+                                  foreach ($answer_details as $answer_detail) {
+                                      $query->orWhere(function ($subQuery) use ($answer_detail) {
+                                          $subQuery->where('question_requirment', $answer_detail->question_id)
+                                                   ->where('question_requirment_value', $answer_detail->answer);
+                                      });
+                                  }
+                              })->whereNotIn('id', $answer_details->pluck('question_id'))->get(); // Menambahkan kondisi untuk hanya mengambil pertanyaan yang belum terjawab
+                            
+        if($cekQuestion->isEmpty()){
+            if($jawaban->nowSection == $jawaban->maxSection){
+                $jawaban->nowSection += 1;
+                $jawaban->save();
+                return redirect()->route('showForm', ['template' => $form->template->slug])->with('success', 'Formulir sudah Diisi');
+            }else{
+                $jawaban->nowSection += 1;
+                $jawaban->save();
+
+                return redirect()->action(
+                    [JawabanController::class, 'showQuestion'], ['form' => $form->slug]
+                );
+            }
         }else{
-            // Update 'nowSection' untuk section berikutnya
-            $jawaban->nowSection += 1;
-            $jawaban->save();
-            // Redirect ke pertanyaan berikutnya
             return redirect()->action(
                 [JawabanController::class, 'showQuestion'], ['form' => $form->slug]
             );
-        }
-           
+        }          
     }
        
     
@@ -121,7 +141,6 @@ class JawabanController extends Controller
         //
     }
 
-
     public function showQuestion(Form $form)
     {
         $user = Auth::user();
@@ -139,18 +158,62 @@ class JawabanController extends Controller
         if(!$jawaban) {
             $section = 1;
             $btnMessage = 'Next';
+            $questions = Questions::where('template_id', $form->template_id)
+                                ->where('section', $section)
+                                ->whereNull('question_requirment')
+                                ->get();
         }else if($jawaban->nowSection > $jawaban->maxSection){
             return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Anda Sudah Mengisi Form ini');
         }else{
             $section = $jawaban->nowSection;
             $btnMessage = $section == $jawaban->maxSection ? 'Finish' : 'Next';
+            // Ambil answer_detail untuk jawaban yang sudah ada
+            $answer_details = AnswerDetail::where('jawaban_id', $jawaban->id)->get();
+
+            // Ambil pertanyaan dengan memperhatikan question_requirment
+            $questions = Questions::where('template_id', $form->template_id)
+                              ->where('section', $section)
+                              ->where(function ($query) use ($answer_details) {
+                                  // Tampilkan pertanyaan yang tidak ada requirement-nya
+                                  $query->whereNull('question_requirment');
+
+                                  // Tampilkan pertanyaan yang memenuhi syarat question_requirment
+                                  foreach ($answer_details as $answer_detail) {
+                                      $query->orWhere(function ($subQuery) use ($answer_detail) {
+                                          $subQuery->where('question_requirment', $answer_detail->question_id)
+                                                   ->where('question_requirment_value', $answer_detail->answer);
+                                      });
+                                  }
+                              })->whereNotIn('id', $answer_details->pluck('question_id'))->get(); // Menambahkan kondisi untuk hanya mengambil pertanyaan yang belum terjawab
 
         }
-        // Ambil pertanyaan untuk section saat ini
-        $questions = Questions::where('template_id', $form->template_id)
-                            ->where('section', $section)
-                            ->get();
 
+        if($questions->isEmpty()){
+            $max = DB::table('questions')->where('template_id', $form->template_id)->max('section');
+            if(!$jawaban){
+                while($questions->isEmpty() && $section <= $max){
+                    $questions = Questions::where('template_id', $form->template_id)
+                                ->where('section', $section)
+                                ->whereNull('question_requirment')
+                                ->get();
+                    if($questions->isEmpty()){
+                        $section += 1;
+                    }
+                }
+            }else{
+                $jawaban->nowSection += 1;
+                $jawaban->save();
+                    return redirect()->action(
+                        [JawabanController::class, 'showQuestion'], ['form' => $form->slug]
+                    );
+            }
+
+            if($section > $max){
+                return redirect()->route('showForm', ['template' => $form->template->slug])->with('warning', 'Form ini Kosong, hubungi pemilik formulir');
+            } 
+            $section = 1;
+
+        }
         return view('homepage.answer', [
             'title' => $form->nama,
             'form' => $form,

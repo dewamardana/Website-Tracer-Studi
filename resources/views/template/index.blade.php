@@ -25,14 +25,33 @@
                 <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" aria-current="page" href="#">Beranda</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Tentang Unud</a>
+                <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="#">Tentang Unud</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Kehidupan Kampus</a>
+                <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="#">Kehidupan Kampus</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Layanan Online</a>
+                <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="#">Layanan Online</a>
               </li>
+              @can('admin')
+                <li class="nav-item ">
+                  <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/dashboard">Dashboard</a>
+                </li>
+              @elsecan('dosen')
+                <li class="nav-item ">
+                  <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/dashboard">Dashboard</a>
+                </li>
+              @endcan
+              @if(Auth::check())
+                <form action="{{ route('logout') }}" method="POST" style="display:inline;"> 
+                    @csrf
+                      <button type="button" class="btn btn-primary mx-2">Logout</button>
+                </form>
+              @else
+                <li class="nav-item ">
+                  <a class="nav-link {{ Request::is('/') ? 'active' : '' }}" href="/login">Login</a>
+                </li>
+              @endif
             </ul>
           </div>
         </div>

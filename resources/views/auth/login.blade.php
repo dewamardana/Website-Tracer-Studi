@@ -43,5 +43,6 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+        <a href="/register">Sudah punya akun ? <span style="color: blue">Register</span></a>
     </form>
 </x-guest-layout>

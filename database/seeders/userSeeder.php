@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -11,35 +12,36 @@ class userSeeder extends Seeder
 {
     public function run()
     {
-        // Daftar users
         $users = [
             [
-                'role_id' => 1, // Admin
                 'name' => 'Mardana',
                 'email' => 'dewamardana@gmail.com',
                 'password' => Hash::make('123456789'),
+                'role' => ['admin'], // Role sebagai array
             ],
             [
-                'role_id' => 2, // Lecturer
                 'name' => 'Lecturer User',
                 'email' => 'lecturer@example.com',
                 'password' => Hash::make('password123'),
+                'role' => ['dosen'], // Role sebagai array
             ],
             [
-                'role_id' => 3, // Student/Alumni
-                'name' => 'Student User',
-                'email' => 'student@example.com',
+                'name' => 'Student User 1',
+                'email' => 'student1@example.com',
                 'password' => Hash::make('password123'),
+                'role' => ['mahasiswa'], // Role sebagai array
             ],
             [
-                'role_id' => 1, // Admin
-                'name' => 'Another Admin',
-                'email' => 'anotheradmin@example.com',
+                'name' => 'Student User 2',
+                'email' => 'student2@example.com',
                 'password' => Hash::make('password123'),
+                'role' => ['mahasiswa'], // Role sebagai array
             ],
         ];
 
-        // Insert users
-        DB::table('users')->insert($users);
+        // Insert users into the database
+        foreach ($users as $user) {
+            User::create($user);
+        }
     }
 }

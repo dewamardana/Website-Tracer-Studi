@@ -19,10 +19,15 @@ return new class extends Migration
             $table->json('options')->nullable(); // Options for questions like radio, checkbox, dropdown
             $table->boolean('required')->default(false); // Whether the question is required or not
             $table->integer('section')->default(1);
+            $table->unsignedBigInteger('question_requirment')->nullable(); // ID of the question used as requirement
+            $table->string('question_requirment_value')->nullable(); // Value for the requirement
+            $table->string('question_requirment_text')->nullable(); // Value for the requirement
             $table->timestamps();
 
             // Foreign key constraint
             $table->foreign('template_id')->references('id')->on('templates')->onDelete('cascade');
+            // Foreign key constraint for question_requirment (references the same table)
+            $table->foreign('question_requirment')->references('id')->on('questions')->onDelete('set null');
         });
     }
 

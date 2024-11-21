@@ -19,10 +19,15 @@
                 @foreach ($questions as $question)
                     <div class="form-group">
                         <label> {!! $question->question !!}</label>
+                        @if ($errors->has('answers.' . $question->id))
+                            <div class="text-danger mb-2">
+                                {{ $errors->first('answers.' . $question->id) }}
+                            </div>
+                        @endif
                         @if ($question->type == 'text')
                             <input type="text" name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
                         @elseif ($question->type == 'radio')
-                            @foreach ($question->options ?? [] as $option)
+                            @foreach (is_array($question->options) ? $question->options : [] as $option)
                                 <div class="form-check">
                                     <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option }}" class="form-check-input" {{ $question->required ? 'required' : '' }}>
                                     <label class="form-check-label">{{ $option }}</label>
@@ -30,22 +35,21 @@
                             @endforeach
                         @elseif ($question->type == 'dropdown')
                             <select name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
-                                @foreach ($question->options ?? [] as $option)
+                                @foreach (is_array($question->options) ? $question->options : [] as $option)
                                     <option value="{{ $option }}">{{ $option }}</option>
                                 @endforeach
                             </select>
                         @elseif ($question->type == 'checkbox')
-                        
-                            @foreach ($question->options ?? [] as $option)
+                            @foreach (is_array($question->options) ? $question->options : [] as $option)
                                 <div class="form-check">
                                     <input type="checkbox" name="answers[{{ $question->id }}][]" value="{{ $option }}" class="form-check-input">
                                     <label class="form-check-label">{{ $option }}</label>
                                 </div>
                             @endforeach
                         @elseif ($question->type == 'textarea')
-                            <textarea name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}></textarea>
+                            <textarea name="answers[{{ $question->id }}]}" class="form-control" {{ $question->required ? 'required' : '' }}></textarea>
                         @elseif ($question->type == 'date')
-                             <input type="date" name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
+                            <input type="date" name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
                         @endif
                     </div>
                 @endforeach
@@ -59,3 +63,43 @@
 </div>
 
 @endsection
+
+{{-- @extends('template.index')
+
+@section('content')
+@foreach ($questions as $question)
+   
+
+    @if ($is_required_question)
+        <div class="form-group">
+            <label> {!! $question->question !!}</label>
+            @if ($question->type == 'text')
+                <input type="text" name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
+            @elseif ($question->type == 'radio')
+                @foreach ($question->options ?? [] as $option)
+                    <div class="form-check">
+                        <input type="radio" name="answers[{{ $question->id }}]" value="{{ $option }}" class="form-check-input" {{ $question->required ? 'required' : '' }}>
+                        <label class="form-check-label">{{ $option }}</label>
+                    </div>
+                @endforeach
+            @elseif ($question->type == 'dropdown')
+                <select name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
+                    @foreach ($question->options ?? [] as $option)
+                        <option value="{{ $option }}">{{ $option }}</option>
+                    @endforeach
+                </select>
+            @elseif ($question->type == 'checkbox')
+                @foreach ($question->options ?? [] as $option)
+                    <div class="form-check">
+                        <input type="checkbox" name="answers[{{ $question->id }}][]" value="{{ $option }}" class="form-check-input">
+                        <label class="form-check-label">{{ $option }}</label>
+                    </div>
+                @endforeach
+            @elseif ($question->type == 'textarea')
+                <textarea name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}></textarea>
+            @elseif ($question->type == 'date')
+                <input type="date" name="answers[{{ $question->id }}]" class="form-control" {{ $question->required ? 'required' : '' }}>
+            @endif
+        </div>
+    @endif
+@endforeach --}}
