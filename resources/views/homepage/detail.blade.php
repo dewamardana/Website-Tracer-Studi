@@ -4,11 +4,7 @@
 
     <section id="monev">
         <div class="section-title text-center">
-<<<<<<< HEAD
-            <p class="fs-1 fw-bold">Template <span> {{ $title }}</span></p>
-=======
             <p class="fs-1 fw-bold">Form <span> {{ $title }}</span></p>
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
         </div>
         <div class="container">
             <div class="row justify-content-center">

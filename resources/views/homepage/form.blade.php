@@ -2,33 +2,6 @@
 
 @section('content')
 
-<<<<<<< HEAD
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Buat Formulir</h1>
-</div>
-<a href="/detail/{{ $kategori }}" class="btn btn-success mt-2 mb-2">Kembali</a>
-
-    <div class="table-responsive">
-        <table class="table table-sm">
-          <thead>
-            <tr>
-              <th scope="col">No</th>
-              <th scope="col">Nama Formulir</th>
-              <th scope="col">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach ($form as $index => $f)
-            <tr>
-              <td>{{ $index+1 }}</td>
-              <td>{{ $f->nama }}</td>
-              <td><a href="/detail/answer/{{ $f->id }}" class="badge bg-primary"><span data-feather="edit"></a>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
-    </div>
-=======
 <!-- Notifikasi -->
 @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
@@ -78,5 +51,4 @@
         </tbody>
     </table>
 </div>
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 @endsection

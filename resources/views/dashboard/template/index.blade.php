@@ -1,16 +1,6 @@
 @extends('dashboard.Layout.main')
 
 @section('main')
-<<<<<<< HEAD
-  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Haii {{ $user }}</h1>
-  </div>
-  @if (session('success'))
-  <div class="alert alert-success mt-1" role="alert">
-    {{ session('success') }}
-  </div>
-  @endif
-=======
   	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     	<h1 class="h2">Haii {{ $user }}</h1>
   	</div>
@@ -23,7 +13,6 @@
     		{{ session('warning') }}
   		</div>
   	@endif
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 
 @if(session('showModal'))
 <!-- Modal -->

@@ -1,21 +1,6 @@
 @extends('dashboard.Layout.main')
 
 @section('main')
-<<<<<<< HEAD
-@if ($errors->any())
-    <div style="color: red;">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <div class="alert alert-primary" role="alert">
-                    <li>{{ $error }}</li>
-                </div>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
-=======
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Create Formulir</h1>
 </div>
@@ -26,11 +11,7 @@
     <div class="mb-3">
         <label for="form-title-input" class="form-label fs-2 fw-bold">Judul Template</label>
         <input type="text" class="form-control @error('nama') is-invalid @enderror" id="form-title-input" name="nama"
-<<<<<<< HEAD
-        value="{{ old('nama') }}" required>
-=======
         value="{{ old('nama') }}">
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
         @error('nama')
             <div class="alert alert-danger">{{ $message }}</div>
         @enderror
@@ -38,11 +19,7 @@
     
     <div class="mb-3">
         <label for="kategori_id" class="form-label">Kategori</label>
-<<<<<<< HEAD
-        <select class="form-select form-select-lg mb-3 @error('kategori_id') is-invalid @enderror" aria-label="Large select example" id="kategori_id" name="kategori_id" required>
-=======
         <select class="form-select form-select-lg mb-3 @error('kategori_id') is-invalid @enderror" aria-label="Large select example" id="kategori_id" name="kategori_id">
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
             <option selected disabled>Pilih Kategori</option>
             @foreach ($kategori as $k)
                 <option value="{{ $k->id }}" {{ old('kategori_id') == $k->id ? 'selected' : '' }}>{{ $k->nama }}</option>
@@ -56,87 +33,6 @@
     <div id="questions-container">
         @if(old('questions'))
             @foreach(old('questions') as $index => $question)
-<<<<<<< HEAD
-                <div class="question-item mb-4" data-index="{{ $index }}">
-                    <div class="mb-3">
-                        <div class="row">
-                            <div class="col text-start">
-                                <label class="form-label">Judul Pertanyaan</label>
-                            </div>
-                            <div class="col text-end">
-                                <button type="button" class="btn btn-danger remove-question">Remove Question</button>
-                            </div>
-                        </div>
-                        <div class="text-bg-light toolbar">
-                            <button type="button" class="btn" data-command="bold"><b>B</b></button>
-                            <button type="button" class="btn" data-command="italic"><i>I</i></button>
-                            <button type="button" class="btn" data-command="underline"><u>U</u></button>
-                            <button type="button" class="btn" data-command="createLink">Link</button>
-                        </div>
-                        <div contenteditable="true" class="editor form-control">{{ old('questions.'.$index.'.question') }}</div>
-                        <input type="hidden" name="questions[{{ $index }}][question]" class="question-content" value="{{ old('questions.'.$index.'.question') }}">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Type</label>
-                        <select class="form-control type-select" name="questions[{{ $index }}][type]" required>
-                            <option value="text" {{ old('questions.'.$index.'.type') == 'text' ? 'selected' : '' }}>Text</option>
-                            <option value="radio" {{ old('questions.'.$index.'.type') == 'radio' ? 'selected' : '' }}>Radio</option>
-                            <option value="dropdown" {{ old('questions.'.$index.'.type') == 'dropdown' ? 'selected' : '' }}>Dropdown</option>
-                            <option value="checkbox" {{ old('questions.'.$index.'.type') == 'checkbox' ? 'selected' : '' }}>Checkbox</option>
-                            <option value="date" {{ old('questions.'.$index.'.type') == 'date' ? 'selected' : '' }}>Date</option>
-                            <option value="email" {{ old('questions.'.$index.'.type') == 'email' ? 'selected' : '' }}>Email</option>
-                            <option value="number" {{ old('questions.'.$index.'.type') == 'number' ? 'selected' : '' }}>Number</option>
-                            <option value="range" {{ old('questions.'.$index.'.type') == 'range' ? 'selected' : '' }}>Range</option>
-                            <option value="time" {{ old('questions.'.$index.'.type') == 'time' ? 'selected' : '' }}>Time</option>
-                        </select>
-                    </div>
-                    <div class="mb-3 options-container" style="display: {{ in_array(old('questions.'.$index.'.type'), ['radio', 'dropdown', 'checkbox']) ? 'block' : 'none' }};">
-                        <label class="form-label">Options</label>
-                        <div class="options-list">
-                            @if(old('questions.'.$index.'.options'))
-                                @foreach(old('questions.'.$index.'.options') as $option)
-                                    <div class="input-group mb-2">
-                                        <input type="text" class="form-control" name="questions[{{ $index }}][options][]" value="{{ $option }}" placeholder="Option">
-                                        <button type="button" class="btn btn-danger remove-option">Remove</button>
-                                    </div>
-                                @endforeach
-                            @endif
-                        </div>
-                        <button type="button" class="btn btn-secondary add-option">Add Option</button>
-                    </div>
-                    <div class="mb-3">
-                        <div class="row text-start">
-                            <div class="col-sm-1 col-md-1">
-                                <div class="form-check">
-                                    <label class="form-label">Required</label>
-                                </div>
-                            </div>
-                            <div class="col-sm-1 col-md-1">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="questions[{{ $index }}][required]" value="1" {{ old('questions.'.$index.'.required') == '1' ? 'checked' : '' }}>
-                                    <label class="form-check-label">Ya </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-1 col-md-1">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="questions[{{ $index }}][required]" value="0" {{ old('questions.'.$index.'.required') == '0' ? 'checked' : '' }}>
-                                    <label class="form-check-label">Tidak </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="section" class="form-label">Section</label>
-                        <select class="form-select form-select-lg mb-3 @error('section') is-invalid @enderror" aria-label="Large select example" id="section" name="questions[{{ $index }}][section]" required>
-                            @for ($i = 1; $i <= 10; $i++)
-                                <option value="{{ $i }}" {{ old('questions.'.$index.'.section') == $i ? 'selected' : '' }}>{{ $i }}</option> 
-                            @endfor    
-                        </select>
-                        @error('section')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-=======
                 <div class="question-item mb-5" data-index="{{ $index }}">
                     <div class="col text-end">
                         <button type="button" class="btn btn-danger remove-question">Remove Question</button>
@@ -266,26 +162,16 @@
                         </div>
                     </div>    
 
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
                 </div>
             @endforeach
         @endif
     </div>
-<<<<<<< HEAD
-    <button type="button" class="btn btn-secondary" id="add-question">Add Question</button>
-    <button type="submit" class="btn btn-primary">Create</button>
-=======
     <button type="button" class="btn btn-secondary mt-2 mb-5" id="add-question">Add Question</button>
     <button type="submit" class="btn btn-primary mt-2 mb-5">Create</button>
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 </form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-<<<<<<< HEAD
-        let questionIndex = {{ old('questions') ? count(old('questions')) : 0 }};
-        
-=======
         // let questionIndex = {{ old('questions') ? count(old('questions')) : 0 }};
         const oldQuestions = @json(old('questions', null)); // Cek data old() dari Laravel
         let questionIndex = @json(old('questions') ? count(old('questions')) : 0);
@@ -297,16 +183,12 @@
         }
         updateRequirementValues();
 
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
         function toggleOptions(container, type) {
             const optionsContainer = container.querySelector('.options-container');
             optionsContainer.style.display = ['radio', 'dropdown', 'checkbox'].includes(type) ? 'block' : 'none';
         }
 
-<<<<<<< HEAD
-=======
         
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
         function initializeToolbar(editor) {
             const toolbar = editor.previousElementSibling;
             toolbar.querySelectorAll('button').forEach(button => {
@@ -321,11 +203,7 @@
                 });
             });
         }
-<<<<<<< HEAD
-
-=======
         
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
         function initializeEditor(editor) {
             editor.addEventListener('input', () => {
                 const hiddenInput = editor.nextElementSibling;
@@ -338,112 +216,6 @@
             const removeButtons = document.querySelectorAll('.remove-question');
             removeButtons.forEach(button => button.disabled = removeButtons.length === 1);
         }
-<<<<<<< HEAD
-
-        function createQuestionTemplate(index) {
-            return `
-                <div class="question-item mb-4" data-index="${index}">
-                    <div class="mb-3">
-                        <div class="row">
-                            <div class="col text-start">
-                                <label class="form-label">Judul Pertanyaan</label>
-                            </div> 
-                            <div class="col text-end">
-                                <button type="button" class="btn btn-danger remove-question">Remove Question</button>
-                            </div> 
-                        </div>  
-                        <div class="text-bg-light toolbar">
-                            <button type="button" class="btn" data-command="bold"><b>B</b></button>
-                            <button type="button" class="btn" data-command="italic"><i>I</i></button>
-                            <button type="button" class="btn" data-command="underline"><u>U</u></button>
-                            <button type="button" class="btn" data-command="createLink">Link</button>
-                        </div>
-                        <div contenteditable="true" class="editor form-control"></div>
-                        <input type="hidden" name="questions[${index}][question]" class="question-content">         
-                    </div>  
-                    <div class="mb-3">
-                        <label class="form-label">Type</label>
-                        <select class="form-control type-select" name="questions[${index}][type]" required>
-                            <option value="text">Text</option>
-                            <option value="radio">Radio</option>
-                            <option value="dropdown">Dropdown</option>
-                            <option value="checkbox">Checkbox</option>
-                            <option value="date">Date</option>
-                            <option value="email">Email</option>
-                            <option value="number">Number</option>
-                            <option value="range">Range</option>
-                            <option value="time">Time</option>
-                        </select>
-                    </div>
-                    <div class="mb-3 options-container" style="display: none;">
-                        <label class="form-label">Options</label>
-                        <div class="options-list">
-                            <div class="input-group mb-2">
-                                <input type="text" class="form-control" name="questions[${index}][options][]" placeholder="Option">
-                                <button type="button" class="btn btn-danger remove-option">Remove</button>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary add-option">Add Option</button>
-                    </div>
-                    <div class="mb-3">
-                        <div class="row text-start">
-                            <div class="col-sm-1 col-md-1">
-                                <div class="form-check">
-                                    <label class="form-label">Required</label>
-                                </div>
-                            </div>
-                            <div class="col-sm-1 col-md-1">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="questions[${index}][required]" value="1">
-                                    <label class="form-check-label">Ya </label>
-                                </div>
-                            </div>
-                            <div class="col-sm-1 col-md-1">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="questions[${index}][required]" value="0">
-                                    <label class="form-check-label">Tidak </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="section" class="form-label">Section</label>
-                        <select class="form-select form-select-lg mb-3 @error('section') is-invalid @enderror" aria-label="Large select example" id="section" name="questions[${index }][section]" required>
-                            @for ($i = 1; $i <= 10; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option> 
-                            @endfor    
-                        </select>
-                        @error('section')
-                            <div class="alert alert-danger">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-            `;
-        }
-
-        document.getElementById('add-question').addEventListener('click', function () {
-            const questionsContainer = document.getElementById('questions-container');
-            const newQuestion = document.createElement('div');
-            newQuestion.innerHTML = createQuestionTemplate(questionIndex);
-            questionsContainer.appendChild(newQuestion);
-            initializeEditor(newQuestion.querySelector('.editor'));
-            questionIndex++;
-            updateRemoveButtons();
-        });
-
-        document.getElementById('questions-container').addEventListener('change', function (e) {
-            if (e.target && e.target.classList.contains('type-select')) {
-                const container = e.target.closest('.question-item');
-                toggleOptions(container, e.target.value);
-            }
-        });
-
-        document.getElementById('questions-container').addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('remove-question')) {
-                e.target.closest('.question-item').remove();
-                updateRemoveButtons();
-            }
-=======
     
 
         
@@ -680,7 +452,6 @@
                             toggleOptions(container, e.target.value);
                         }
                     });
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 
             if (e.target && e.target.classList.contains('add-option')) {
                 const container = e.target.closest('.question-item');
@@ -699,9 +470,6 @@
             }
         });
 
-<<<<<<< HEAD
-        document.querySelector('form').addEventListener('submit', () => {
-=======
         document.querySelector('form').addEventListener('submit', (e) => {
             updateFormData(); // Pastikan formData diperbarui sebelum submit
 
@@ -720,7 +488,6 @@
                 return;
             }
 
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
             document.querySelectorAll('.editor').forEach(editor => {
                 const hiddenInput = editor.nextElementSibling;
                 hiddenInput.value = editor.innerHTML;
@@ -738,13 +505,6 @@
 
         // Initialize existing editors
         document.querySelectorAll('.editor').forEach(editor => initializeEditor(editor));
-<<<<<<< HEAD
-    });
-</script>
-
-@endsection
-
-=======
 
         function createQuestionTemplate(index, question, questionsList) {
             return `
@@ -851,4 +611,3 @@
 
 
 @endsection
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
