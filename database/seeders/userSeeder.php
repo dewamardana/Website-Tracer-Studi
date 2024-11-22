@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-<<<<<<< HEAD
-=======
 use App\Models\User;
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -15,38 +12,6 @@ class userSeeder extends Seeder
 {
     public function run()
     {
-<<<<<<< HEAD
-        // Daftar users
-        $users = [
-            [
-                'role_id' => 1, // Admin
-                'name' => 'Mardana',
-                'email' => 'dewamardana@gmail.com',
-                'password' => Hash::make('123456789'),
-            ],
-            [
-                'role_id' => 2, // Lecturer
-                'name' => 'Lecturer User',
-                'email' => 'lecturer@example.com',
-                'password' => Hash::make('password123'),
-            ],
-            [
-                'role_id' => 3, // Student/Alumni
-                'name' => 'Student User',
-                'email' => 'student@example.com',
-                'password' => Hash::make('password123'),
-            ],
-            [
-                'role_id' => 1, // Admin
-                'name' => 'Another Admin',
-                'email' => 'anotheradmin@example.com',
-                'password' => Hash::make('password123'),
-            ],
-        ];
-
-        // Insert users
-        DB::table('users')->insert($users);
-=======
         $users = [
             [
                 'name' => 'Mardana',
@@ -78,6 +43,5 @@ class userSeeder extends Seeder
         foreach ($users as $user) {
             User::create($user);
         }
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
     }
 }
