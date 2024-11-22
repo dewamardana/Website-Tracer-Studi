@@ -358,6 +358,7 @@ class dataDummySeeder extends Seeder
                     'user_id' => rand(1, 4),
                     'tahun_ajaran' => now()->year,
                     'open' => now(),
+                    'tipe' => 'default_value',
                     'close' => now()->addDays(10),
                 ]);
             }

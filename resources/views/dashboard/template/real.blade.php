@@ -255,8 +255,6 @@
     });
 </script>
 @endsection
-<<<<<<< HEAD
-=======
 
 
 
@@ -1683,4 +1681,3 @@
         document.querySelectorAll('.editor').forEach(initializeEditor);
     });
 </script> --}}
->>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
