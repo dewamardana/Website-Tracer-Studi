@@ -40,28 +40,30 @@ class TemplateController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $request->validate([ 
+        
+        $request->validate([
             'kategori_id' => 'required|numeric',
             'nama' => 'required|unique:templates|string|max:255',
             'questions' => 'required|array',
             'questions.*.question' => 'required|string',
             'questions.*.type' => 'required|string',
             'questions.*.section' => 'required|numeric',
-
+            'questions.*.options' => 'nullable|array',
+            'questions.*.required' => 'boolean',
+            'questions.*.question-requirment' => 'nullable|string',
+            'questions.*.question-requirment-value' => 'nullable|string',
         ]);
 
         // Generate the initial slug
         $slug = Str::of($request->nama)->slug('-');
         $originalSlug = $slug;
-
-        // Check if slug already exists and modify it if necessary
         $counter = 1;
         while (DB::table('templates')->where('slug', $slug)->exists()) {
-            // Add a counter to the slug if it already exists
             $slug = $originalSlug . '-' . $counter;
             $counter++;
         }
 
+        // Buat template form
         $form = Template::create([
             'nama' => $request->nama,
             'slug' => $slug,
@@ -69,13 +71,48 @@ class TemplateController extends Controller
             'user_id' => $user->id
         ]);
 
-        foreach ($request->questions as $question) {
-            $form->questions()->create($question);
+        // Menyimpan pertanyaan tanpa question_requirment
+        $questionIDs = [];
+        foreach ($request->questions as $questionData) {
+            $question_requirment_text = $questionData['question-requirment'] ?? null;
+            // Simpan pertanyaan tanpa question_requirment untuk sementara
+            $question = $form->questions()->create([
+                'question' => $questionData['question'],
+                'type' => $questionData['type'],
+                'options' => $questionData['options'] ?? [], // Laravel akan otomatis mengonversi array ke JSON
+                'required' => $questionData['required'] ?? false,
+                'section' => $questionData['section'],
+                'question_requirment_text' => $question_requirment_text,
+
+            ]);
+
+            // Simpan ID pertanyaan
+            $questionIDs[$questionData['question']] = $question->id;
         }
 
+        // Update pertanyaan yang memiliki question_requirment
+        foreach ($request->questions as $questionData) {
+            if (!empty($questionData['question-requirment']) && isset($questionIDs[$questionData['question-requirment']])) {
+                // Ambil ID pertanyaan yang dijadikan syarat
+                $requirementQuestionId = $questionIDs[$questionData['question-requirment']];
+
+                // Update pertanyaan dengan requirement
+                $form->questions()
+                    ->where('id', $questionIDs[$questionData['question']])
+                    ->update([
+                        'question_requirment' => $requirementQuestionId,
+                        'question_requirment_value' => $questionData['question-requirment-value']
+                    ]);
+            }
+        }
+
+        // Redirect atau kembalikan ke halaman yang diinginkan
         $back = Kategori::findOrFail($request->kategori_id);
-        return redirect()->route('templateDetail', ['kategori' => $back->slug])->with('success', 'Template Berhasil Dibuat.');
+        return redirect()->route('templateDetail', ['kategori' => $back->slug])
+                        ->with('success', 'Template Berhasil Dibuat.');
     }
+
+    
 
     /**
      * Display the specified resource.
@@ -92,6 +129,11 @@ class TemplateController extends Controller
      */
     public function edit(Template $template)
     {
+        $user = Auth::user();
+        // Pastikan hanya user yang membuat form yang dapat memperbarui
+        if ($template->user_id !== $user->id) {
+            return back()->with('warning', 'Tidak Bisa Mengubah Template Pengguna Lain');
+        }
         $kategori = Kategori::all();
         return view('dashboard.template.edit',[
             'title' => 'edit',
@@ -105,8 +147,6 @@ class TemplateController extends Controller
      */
     public function update(Request $request, Template $template)
     {
-        $user = Auth::user();
-    
         // Validasi input
         $request->validate([
             'kategori_id' => 'required|numeric',
@@ -114,44 +154,94 @@ class TemplateController extends Controller
             'questions' => 'required|array',
             'questions.*.question' => 'required|string',
             'questions.*.type' => 'required|string',
+            'questions.*.section' => 'required|numeric',
+            'questions.*.options' => 'nullable|array',
+            'questions.*.required' => 'boolean',
+            'questions.*.question-requirment' => 'nullable|string',
+            'questions.*.question-requirment-value' => 'nullable|string',
         ]);
 
-        // Temukan form yang akan diperbarui
-        $form = Template::findOrFail($template->id);
+        // Validasi nama template
+        $existingTemplate = Template::where('id', '!=', $template->id)
+            ->where('nama', $request->nama)
+            ->first();
 
-        // Pastikan hanya user yang membuat form yang dapat memperbarui
-        if ($form->user_id !== $user->id) {
-            return redirect()->back()->with('error', 'You do not have permission to edit this form.');
+        if ($existingTemplate) {
+            return back()->with('warning', 'Nama Template sudah ada, coba yang lain');
         }
 
-        // Perbarui informasi form
-        $form->update([
+        // Perbarui data template
+        $template->update([
             'nama' => $request->nama,
             'kategori_id' => $request->kategori_id,
             'slug' => Str::of($request->nama)->slug('-'),
         ]);
 
-        // Hapus pertanyaan yang ada
-        $form->questions()->delete();
+        // Hapus semua pertanyaan lama
+        $template->questions()->delete();
 
-        // Tambahkan pertanyaan baru
-        foreach ($request->questions as $question) {
-            $form->questions()->create($question);
+        // Simpan pertanyaan baru tanpa `question_requirment`
+        $questionIDs = [];
+        foreach ($request->questions as $questionData) {
+            $question_requirment_text = $questionData['question-requirment'] ?? null;
+            $question = $template->questions()->create([
+                'question' => $questionData['question'],
+                'type' => $questionData['type'],
+                'options' => $questionData['options'] ?? [],
+                'required' => $questionData['required'] ?? false,
+                'section' => $questionData['section'],
+                'question_requirment_text' => $question_requirment_text,
+            ]);
+
+            // Simpan ID pertanyaan
+            $questionIDs[$questionData['question']] = $question->id;
         }
 
+        // Update pertanyaan dengan `question_requirment`
+        foreach ($request->questions as $questionData) {
+            if (!empty($questionData['question-requirment']) && isset($questionIDs[$questionData['question-requirment']])) {
+                // Ambil ID pertanyaan yang dijadikan syarat       
+                $requirementQuestionId = $questionIDs[$questionData['question-requirment']];
+
+                // Update pertanyaan dengan requirement
+                $template->questions()
+                    ->where('id', $questionIDs[$questionData['question']])
+                    ->update([
+                        'question_requirment' => $requirementQuestionId,
+                        'question_requirment_value' => $questionData['question-requirment-value'],
+                    ]);
+            }
+        }
+
+        // Redirect atau kembalikan ke halaman yang diinginkan
         $back = Kategori::findOrFail($request->kategori_id);
-        return redirect()->route('templateDetail', ['kategori' => $back->slug])->with('success', 'Template Berhasil Diperbarui.');
+        return redirect()->route('templateDetail', ['kategori' => $back->slug])
+            ->with('success', 'Template Berhasil Diperbarui.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Template $template)
     {
-        DB::table('questions')->where('template_id', $template->id)->delete();
-        DB::table('templates')->where('id', $template->id)->delete();
+        $user = Auth::user();
+        if ($template->user_id !== $user->id) {
+            return back()->with('warning', 'Tidak Bisa Menghapus Template Pengguna Lain');
+        }
 
-        return redirect()->back()->with('success', 'Template Berhasil Dihapus.');
+        try {
+            // Hapus semua pertanyaan yang terkait dengan template
+            DB::table('questions')->where('template_id', $template->id)->delete();
+            // Hapus template
+            DB::table('templates')->where('id', $template->id)->delete();
+            
+            
+            // Jika berhasil, redirect dengan pesan sukses
+            return redirect()->back()->with('success', 'Template berhasil dihapus.');
+        } catch (\Exception $e) {
+             return redirect()->back()->with('warning', 'Template Gagal dihapus karena sudah berisi data');
+        }
     }
 
 
@@ -177,7 +267,7 @@ class TemplateController extends Controller
     public function duplicates($id)
     {
         // Cek apakah tabel template sudah berisi data
-         $kategori = Kategori::all();
+        $kategori = Kategori::all();
         $template = Template::findOrFail($id);
             return view('dashboard.template.editTemplate',[
                 'title' => 'edit',
@@ -197,9 +287,8 @@ class TemplateController extends Controller
             ]);
     }
 
-    public function copyTemplate($id)
+    public function copyTemplate(Template $template)
     {
-        $template = Template::findOrFail($id);
         $kategori = Kategori::all();
         
         return view('dashboard.template.copyTemplate',[

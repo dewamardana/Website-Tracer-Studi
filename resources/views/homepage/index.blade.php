@@ -5,7 +5,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
+<<<<<<< HEAD
                     <div class="title">tudi | Kuisioner-Ng</div>
+=======
+                    <div class="title">Tracer Studi | Kuisioner-Ng</div>
+>>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
                     <p class="mt-4">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quaerat perspiciatis rerum eveniet nostrum ipsum esse repellat laboriosam temporibus corporis aut!</p>
                 </div>
                 <div class="col-md-6 text-center">

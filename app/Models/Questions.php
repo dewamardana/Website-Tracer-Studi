@@ -26,7 +26,7 @@ class Questions extends Model
         return $this->belongsTo(Template::class);
     }
 
-        public function answers()
+    public function answers()
     {
         return $this->hasMany(answerDetail::class, 'question_id');
     }

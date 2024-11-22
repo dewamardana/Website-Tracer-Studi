@@ -10,8 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Form extends Model
 {
     use HasFactory;
-    protected $fillable = ['nama', 'tipe'];
-
+    protected $guarded = ['id'];
 
         public function template(): BelongsTo
     {

@@ -16,6 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('form_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('template_id');
+            $table->Integer('nowSection')->default(0);
+            $table->Integer('maxSection')->default(0);
+
             $table->timestamps();
             
 

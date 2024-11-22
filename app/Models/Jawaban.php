@@ -21,6 +21,16 @@ class Jawaban extends Model
         return $this->BelongsTo(Form::class);
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+        public function user(): BelongsTo
+    {
+        return $this->BelongsTo(SectionDump::class);
+    }
+
     // public function template(): BelongsTo
     // {
     //     return $this->BelongsTo(Template::class);

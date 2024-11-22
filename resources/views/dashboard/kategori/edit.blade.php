@@ -14,6 +14,15 @@
             </ul>
         </div>
     @endif
+<<<<<<< HEAD
+=======
+
+    @if (session('warning'))
+        <div class="alert alert-warning mt-1" role="alert">
+            {{ session('warning') }}
+        </div>
+    @endif
+>>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
     <div class="container">
         <h2 class="text-center">Edit Kategori</h2>
         <div class="row justify-content-md-center">

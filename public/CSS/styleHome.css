@@ -32,7 +32,8 @@ body {
     padding: 0 10px;
 }
 
-.navbar li:hover {
+ 
+.navbar li:hover, {
     background: #0626b1;
     border-radius: 10px;
 }
@@ -44,6 +45,19 @@ body {
     float: right;
     text-align: left;
 }
+
+.navbar form .btn {
+    padding: 0 10px;
+    color: white;
+}
+
+.navbar form .btn:hover, {
+    background: #0626b1;
+    border-radius: 10px;
+}
+
+
+
 
 /* --------------------------Banner -----------------------*/
 

@@ -1,6 +1,7 @@
 @extends('dashboard.Layout.main')
 
 @section('main')
+<<<<<<< HEAD
 @if ($errors->any())
     <div style="color: red;">
         <ul>
@@ -13,6 +14,8 @@
     </div>
 @endif
 
+=======
+>>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 <a href="/dashboard/form" class="btn btn-success mt-2 mb-2">Kembali</a>
 <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Buat Formulir</h1>
@@ -79,6 +82,7 @@
     </div>
     <button type="submit" class="btn btn-primary">Buat</button>
 </form>
+<<<<<<< HEAD
 <script>
     document.getElementById('tautan').addEventListener('input', function() {
         var namaFormulir = this.value.trim();
@@ -86,5 +90,8 @@
         document.getElementById('tautan').value = linkAkses;
     });
 </script>
+=======
+
+>>>>>>> 250ab6d41aa9fde7ed758faa268346ec9e2b0f5b
 @endsection
 

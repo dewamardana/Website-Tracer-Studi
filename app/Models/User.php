@@ -70,4 +70,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    protected $casts = [
+        'role' => 'array', // Otomatis decode JSON ke array saat mengakses.
+    ];
 }

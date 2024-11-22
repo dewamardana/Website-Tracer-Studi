@@ -6,7 +6,7 @@ use App\Models\Form;
 use App\Models\User;
 use App\Models\Kategori;
 use App\Models\Template;
-use App\Models\Questions;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -52,10 +52,14 @@ class FormController extends Controller
             'open' => 'required|date',
             'close' => 'required|date',
         ]);
+
+        $slug = Str::of($request->nama)->slug('-');
+
+        $validated['slug'] = $slug;
         $validated['user_id'] = $user->id;
-        $validated['tautan'] = "http://pkl-project.test:8080/detail/answer/{$request->nama}";
+        $validated['tautan'] = 'http://pkl-project.test:8080/detail/answer/'. $slug;
         DB::table('forms')->insert($validated);
-        return redirect('/dashboard/form')->with('status', 'Formulir Berhasil Dibuat');
+        return redirect('/dashboard/form')->with('success', 'Formulir Berhasil Dibuat');
 
 
         
@@ -76,11 +80,18 @@ class FormController extends Controller
      */
     public function edit(Form $form)
     {
+        $user = Auth::user();
+        if ($form->user_id !== $user->id) {
+            return back()->with('warning', 'Tidak Bisa Menghapus Formulir Pengguna Lain');
+        }
+        
         $kategori = Kategori::all();
+        $template = Template::all();
         return view('dashboard.form.edit',[
             'title' => 'edit',
             'kategori' => $kategori,
-            'form' => $form
+            'form' => $form,
+            'template' => $template
         ]);
     }
 
@@ -91,41 +102,40 @@ class FormController extends Controller
 
     public function update(Request $request, Form $form)
     {
-    $user = Auth::user();
-    
-    // Validasi input
-    $request->validate([
-        'kategori_id' => 'required|numeric',
-        'form_title_main' => 'required|string|max:255',
-        'questions' => 'required|array',
-        'questions.*.question' => 'required|string',
-        'questions.*.type' => 'required|string',
-    ]);
+        $user = Auth::user();
 
-    // Temukan form yang akan diperbarui
-    $form = Form::findOrFail($form->id);
 
-    // Pastikan hanya user yang membuat form yang dapat memperbarui
-    if ($form->user_id !== $user->id) {
-        return redirect()->back()->with('error', 'You do not have permission to edit this form.');
-    }
+        $validated = $request->validate([ 
+            'nama' => 'required|string|max:255',
+            'template_id' => 'required',
+            'tahun_ajaran' => 'required|numeric',
+            'open' => 'required|date',
+            'close' => 'required|date',
+        ]);
 
-    // Perbarui informasi form
-    $form->update([
-        'nama' => $request->form_title_main,
-        'kategori_id' => $request->kategori_id,
-        'tautan' => "http://pkl-project.test:8080/detail/answer/{$request->nama}",
-    ]);
+        // Pastikan hanya user yang membuat form yang dapat memperbarui
+        if ($form->user_id != $user->id) {
+            return redirect('/dashboard/form')->with('warning', 'Tidak Bisa Mengubah Template Pengguna Lain');
+        }
 
-    // Hapus pertanyaan yang ada
-    $form->questions()->delete();
+        $validated['user_id'] = $user->id;
+        
 
-    // Tambahkan pertanyaan baru
-    foreach ($request->questions as $question) {
-        $form->questions()->create($question);
-    }
-
-    return redirect()->route('formDetail', ['kategori' => $request->kategori_id])->with('success', 'Template Berhasil Diperbarui.');
+        $slug = Str::of($request->nama)->slug('-');
+        $validated['slug'] = $slug;
+        $validated['tautan'] = 'http://pkl-project.test:8080/detail/answer/'. $slug;
+        
+        $validasi = Form::where('id', '!=', $form->id)//yang id-nya tidak sama dengan $id
+                                ->where('nama', $request->nama)
+                                ->first();
+        if ($validasi) {
+            return back()->with('warning', 'Nama sudah ada, coba yang lain');
+        } else {
+            DB::table('forms')->where('id', $form->id)->update($validated);
+            return redirect('/dashboard/form')->with('success', 'Formulir Berhasil Diedit');
+        }
+        
+        
     }
 
 
@@ -134,8 +144,18 @@ class FormController extends Controller
      */
     public function destroy(Form $form)
     {
-        DB::table('forms')->where('id', $form->id)->delete();
-       return redirect('/dashboard/form')->with('status', 'Formilir Berhasil Dihapus');
+        $user = Auth::user();
+        if ($form->user_id !== $user->id) {
+            return back()->with('warning', 'Tidak Bisa Menghapus Formulir Pengguna Lain');
+        }
+
+        try {
+            DB::table('forms')->where('id', $form->id)->delete();
+            return redirect('/dashboard/form')->with('success', 'Formilir Berhasil Dihapus');
+        } catch (\Exception $e) {
+            // Jika gagal, redirect dengan pesan error
+             return redirect('/dashboard/form')->with('warning', 'Formilir gagal Dihapus karena Sudah berisi Data');
+        }
     }
 
 }
