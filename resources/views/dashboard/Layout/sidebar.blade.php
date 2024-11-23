@@ -26,6 +26,12 @@
                   User
                 </a>
               </li>
+              <li class="nav-item">
+              <a class="nav-link {{ Request::is('dashboard/analytics') ? 'active' : '' }}" href="/dashboard/analytics">
+                <span data-feather="activity"></span>
+                Analytics
+              </a>
+            </li>
           @elsecan('dosen')
               <li class="nav-item">
                 <a class="nav-link {{ Request::is('dashboard/menutemplate*') ? 'active' : '' }}" aria-current="page" href="/dashboard/menutemplate">
@@ -46,12 +52,6 @@
               </a>
             </li>
           @else
-            <li class="nav-item">
-              <a class="nav-link {{ Request::is('dashboard/analytics') ? 'active' : '' }}" href="/dashboard/analytics">
-                <span data-feather="activity"></span>
-                Analytics
-              </a>
-            </li>
               
           @endcan
 
